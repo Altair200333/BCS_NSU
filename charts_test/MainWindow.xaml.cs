@@ -43,7 +43,18 @@ namespace charts_test
 
             var SeriesCollection = new ISeries[]
             {
-                new LineSeries<double> {Values = values, Fill = null, LineSmoothness = 0},
+                //new LineSeries<double> {Values = values, Fill = null, LineSmoothness = 0},
+                new LineSeries<ObservablePoint>
+                {
+                    Values = new []
+                    {
+                        new ObservablePoint(1, r.Next(-10, 10)), 
+                        new ObservablePoint(2.2, r.Next(-10, 10)),
+                        new ObservablePoint(2.6, r.Next(-10, 10)),
+                        new ObservablePoint(5.6, r.Next(-10, 10)),
+                    },
+                    Fill = null, LineSmoothness = 0
+                },
             };
 
             chart_plot.plot.Series = SeriesCollection;

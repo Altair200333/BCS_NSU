@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Painting;
+using SkiaSharp;
 
 namespace charts_test
 {
@@ -48,5 +50,10 @@ namespace charts_test
         }
 
         public IEnumerable<ISeries> SeriesCollection { get; set; }
+        public DrawMarginFrame DrawMarginFrame => new DrawMarginFrame
+        {
+            Fill = new SolidColorPaint(new SKColor(220, 220, 220)),
+            Stroke = new SolidColorPaint(new SKColor(180, 180, 180), 2),
+        };
     }
 }
