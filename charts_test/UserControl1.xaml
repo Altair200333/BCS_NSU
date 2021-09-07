@@ -1,0 +1,13 @@
+﻿<UserControl x:Class="charts_test.UserControl1"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+             xmlns:vms="clr-namespace:charts_test;assembly=charts_test"
+             xmlns:chartsTest="clr-namespace:charts_test">
+    <UserControl.DataContext>
+        <chartsTest:ViewModel/>
+    </UserControl.DataContext>
+    <Grid>
+        <lvc:CartesianChart Name="plot" Series="{Binding SeriesCollection}" ZoomMode="Both"></lvc:CartesianChart>
+    </Grid>
+</UserControl>
