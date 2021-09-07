@@ -37,11 +37,11 @@ namespace charts_test
         private List<int> integrationSteps = new List<int>();
         private List<IntegrationMethod> integrationMethods = new List<IntegrationMethod>();
 
-        private int currentIntegrationStep = 2;
+        private int currentIntegrationStep = 0;
         private int currentFunction = 0;
         private int currentMethod = 0;
 
-        public double computeIntegral(Function function, int segments)
+        public double computeBasicIntegral(Function function, int segments)
         {
             double step = (function.maximum - function.minimum) / segments;
             double integral = 0;
@@ -56,7 +56,24 @@ namespace charts_test
 
             return integral;
         }
+        public double computeSimpsonIntegral(Function function, int segments)
+        {
+            double step = (function.maximum - function.minimum) / segments;
+            double integral = 0;
 
+            for (int i = 0; i < segments - 1; i += 2)
+            {
+                double start = function.minimum + step * i;
+                double mid = function.minimum + step * (i + 1);
+                double end = function.minimum + step * (i + 2);
+
+                integral += (end - start) / 6.0 * (function.function(start) + 4.0 * function.function(mid) + function.function(end));
+
+                //integral += (end - start)/6.0*(function.function(start) + 4.0*function.function((start + end)*0.5) + function.function(end));
+            }
+
+            return integral;
+        }
         void plotFunction(Func<double, double> func, double from, double to, int segments)
         {
             List<ObservablePoint> points = new List<ObservablePoint>();
@@ -84,20 +101,8 @@ namespace charts_test
         {
             InitializeComponent();
 
-            integrationMethods.Add(new IntegrationMethod()
-            {
-                name = "Simple",
-                integrate = computeIntegral
-            });
+            createAndFillMethods();
 
-            methods_combo.Items.Clear();
-            foreach (var method in integrationMethods)
-            {
-                methods_combo.Items.Add(new Label() {Content = method.name});
-            }
-
-            methods_combo.SelectedIndex = 0;
-            methods_combo.SelectionChanged += delegate(object sender, SelectionChangedEventArgs args) { selectMethod(methods_combo.SelectedIndex); };
             createFunctions();
 
             fillFunctions();
@@ -111,9 +116,36 @@ namespace charts_test
             
         }
 
+        private void createAndFillMethods()
+        {
+            integrationMethods.Add(new IntegrationMethod()
+            {
+                name = "Simple",
+                integrate = computeBasicIntegral
+            });
+            integrationMethods.Add(new IntegrationMethod()
+            {
+                name = "Simpson",
+                integrate = computeSimpsonIntegral
+            });
+
+            methods_combo.Items.Clear();
+            foreach (var method in integrationMethods)
+            {
+                methods_combo.Items.Add(new Label() {Content = method.name});
+            }
+
+            methods_combo.SelectedIndex = 0;
+            methods_combo.SelectionChanged += delegate(object sender, SelectionChangedEventArgs args)
+            {
+                selectMethod(methods_combo.SelectedIndex);
+            };
+        }
+
         private void selectMethod(int id)
         {
             currentMethod = id;
+            recalculateIntegral();
         }
 
         private void createAndFillIntegrationSteps()
@@ -135,7 +167,7 @@ namespace charts_test
 
         void selectIntegrationStep(int id)
         {
-            currentIntegrationStep = integrationSteps[id];
+            currentIntegrationStep = id;
             recalculateIntegral();
         }
 
@@ -191,7 +223,7 @@ namespace charts_test
         private void recalculateIntegral()
         {
             integral_value.Content = integrationMethods[currentMethod]
-                .integrate(functions[currentFunction], currentIntegrationStep).ToString();
+                .integrate(functions[currentFunction], integrationSteps[currentIntegrationStep]).ToString();
         }
     }
 }
