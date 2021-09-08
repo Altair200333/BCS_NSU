@@ -56,7 +56,7 @@ namespace charts_test
         }
         double computeDerivative(Function f, double x)
         {
-            return (f.function(x - derivativeStep) - f.function(x + derivativeStep)) / (2.0 * derivativeStep);
+            return (f.function(x + derivativeStep) - f.function(x - derivativeStep)) / (2.0 * derivativeStep);
         }
         public Bessel()
         {
@@ -64,6 +64,7 @@ namespace charts_test
 
             derivative_edit.TextChanged += delegate(object sender, TextChangedEventArgs args)
             { editTextChanged(derivative_edit.Text); };
+            editTextChanged("0.00001");
 
             x_slider.ValueChanged += delegate(object sender, RoutedPropertyChangedEventArgs<double> args)
             { onXChanged(x_slider.Value);};
@@ -79,6 +80,7 @@ namespace charts_test
             {
                 if(derivative>0)
                 {
+                    derivative_edit.Text = text;
                     derivativeStep = derivative;
                     onXChanged(x_slider.Value);
                 }
@@ -94,7 +96,7 @@ namespace charts_test
             bessel_0_derivative_value.Content = derivativeValue.ToString();
             bessel_1_value.Content = besselValue.ToString();
 
-            var difference = (derivativeValue - besselValue);
+            var difference = (derivativeValue + besselValue);
             bessel_difference_value.Content = difference.ToString();
             bessel_difference_value.Foreground = new SolidColorBrush(Math.Abs(difference) < 1e-10 ? Colors.Green : Colors.Red);
         }
