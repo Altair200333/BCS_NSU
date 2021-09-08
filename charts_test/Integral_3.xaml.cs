@@ -18,62 +18,16 @@ using LiveChartsCore.SkiaSharpView;
 
 namespace charts_test
 {
-    public struct Function
-    {
-        public string name;
-        public Func<double, double> function;
-        public double minimum;
-        public double maximum;
-    }
-
-    struct IntegrationMethod
-    {
-        public string name;
-        public Func<Function, int, double> integrate;
-    }
+   
     public partial class Integral_3 : Window
     {
         private List<Function> functions = new List<Function>();
         private List<int> integrationSteps = new List<int>();
-        private List<IntegrationMethod> integrationMethods = new List<IntegrationMethod>();
 
         private int currentIntegrationStep = 0;
         private int currentFunction = 0;
         private int currentMethod = 0;
 
-        public double computeBasicIntegral(Function function, int segments)
-        {
-            double step = (function.maximum - function.minimum) / segments;
-            double integral = 0;
-
-            for (int i = 0; i < segments; i++)
-            {
-                double start = function.minimum + step * i;
-                double end = function.minimum + step * (i + 1);
-
-                integral += (function.function(start) + function.function(end)) * 0.5 * (end - start);
-            }
-
-            return integral;
-        }
-        public double computeSimpsonIntegral(Function function, int segments)
-        {
-            double step = (function.maximum - function.minimum) / segments;
-            double integral = 0;
-
-            for (int i = 0; i < segments - 1; i += 2)
-            {
-                double start = function.minimum + step * i;
-                double mid = function.minimum + step * (i + 1);
-                double end = function.minimum + step * (i + 2);
-
-                integral += (end - start) / 6.0 * (function.function(start) + 4.0 * function.function(mid) + function.function(end));
-
-                //integral += (end - start)/6.0*(function.function(start) + 4.0*function.function((start + end)*0.5) + function.function(end));
-            }
-
-            return integral;
-        }
         void plotFunction(Func<double, double> func, double from, double to, int segments)
         {
             List<ObservablePoint> points = new List<ObservablePoint>();
@@ -118,19 +72,8 @@ namespace charts_test
 
         private void createAndFillMethods()
         {
-            integrationMethods.Add(new IntegrationMethod()
-            {
-                name = "Simple",
-                integrate = computeBasicIntegral
-            });
-            integrationMethods.Add(new IntegrationMethod()
-            {
-                name = "Simpson",
-                integrate = computeSimpsonIntegral
-            });
-
             methods_combo.Items.Clear();
-            foreach (var method in integrationMethods)
+            foreach (var method in Mathf.integrationMethods)
             {
                 methods_combo.Items.Add(new Label() {Content = method.name});
             }
@@ -222,7 +165,7 @@ namespace charts_test
 
         private void recalculateIntegral()
         {
-            integral_value.Content = integrationMethods[currentMethod]
+            integral_value.Content = Mathf.integrationMethods[currentMethod]
                 .integrate(functions[currentFunction], integrationSteps[currentIntegrationStep]).ToString();
         }
     }

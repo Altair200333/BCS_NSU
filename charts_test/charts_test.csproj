@@ -96,13 +96,21 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Bessel.xaml.cs">
+      <DependentUpon>Bessel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Integral_3.xaml.cs">
       <DependentUpon>Integral_3.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Mathf.cs" />
     <Compile Include="UserControl1.xaml.cs">
       <DependentUpon>UserControl1.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel.cs" />
+    <Page Include="Bessel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Integral_3.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
