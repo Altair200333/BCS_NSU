@@ -103,7 +103,7 @@ namespace charts_test
 
         class SimpleIterationsSolver : Solver
         {
-            public double epsilon = 0.0001;
+            public double epsilon = 0.000001;
 
             private double a;
             private double U0;
@@ -194,6 +194,7 @@ namespace charts_test
 
         private double X0 = 0.01;
         private double X1 = 0.99;
+        private int selected = 0;
         public Schredinger_2()
         {
             InitializeComponent();
@@ -209,6 +210,17 @@ namespace charts_test
             dihotomy = new DihotomySolver(X0, X1, 0.0001);
             newton = new NewtonSolver(0.5);
             simple = new SimpleIterationsSolver();
+
+            method_combo.Items.Add(new Label() {Content = "Dihotomy"});
+            method_combo.Items.Add(new Label() {Content = "Newtom"});
+            method_combo.Items.Add(new Label() {Content = "Simple"});
+            method_combo.SelectedIndex = 0;
+
+            method_combo.SelectionChanged += delegate(object sender, SelectionChangedEventArgs args)
+            {
+                selected = method_combo.SelectedIndex;
+                recalculate();
+            };
         }
 
         private void recalculate()
@@ -216,14 +228,23 @@ namespace charts_test
             var equation = createEquation(a, U0);
             chart_plot.plot.Series = plotFunction(equation.function, 0.01, 0.99, 200);
 
-            //showDihotomySolution(equation);
-            //showNewtonSolution(equation);
-            showSimpleSolution(equation);
+            if (selected == 0)
+            {
+                showDihotomySolution(equation);
+            }
+            else if (selected == 1)
+            {
+                showNewtonSolution(equation);
+            }
+            else
+            {
+                showSimpleSolution(equation);
+            }
         }
 
         private void showSimpleSolution(Function equation)
         {
-            simple.setParams(a, U0, 0.5);
+            simple.setParams(a, U0, 0.6);
             var solution = simple.solve(equation);
             solution_x.Content = solution.ToString();
             value_at_x.Content = equation.function(solution).ToString();

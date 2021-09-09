@@ -25,6 +25,7 @@
             <Label x:Name="solution_x" Content="0" Canvas.Left="71" Canvas.Top="126" Foreground="#FF0C00FF"/>
             <Label x:Name="value_at_x" Content="0" Canvas.Left="71" Canvas.Top="157" Foreground="#FFF300FF"/>
             <Label Content="Value:" Canvas.Left="25" Canvas.Top="157"/>
+            <ComboBox x:Name="method_combo" Canvas.Left="10" Canvas.Top="188" Width="120"/>
         </Canvas>
         <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
                       HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Black" />
@@ -33,7 +34,7 @@
                 <TabItem Header="plot">
                     <local:UserControl1 x:Name="chart_plot" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
                 </TabItem>
-               
+
             </TabControl>
         </DockPanel>
 
