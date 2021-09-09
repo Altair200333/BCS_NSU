@@ -12,6 +12,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using LiveChartsCore;
+using LiveChartsCore.Defaults;
+using LiveChartsCore.SkiaSharpView;
 
 namespace charts_test
 {
@@ -25,8 +28,8 @@ namespace charts_test
 
     public partial class Bessel : Window
     {
-        private static int currentMethod = 1;
-        private double derivativeStep = 0.001;
+        private static int currentMethod = 0;
+        private double derivativeStep = 0.00001;
         BesselIntegral createBesselIntegral(int m, double x)
         {
             BesselIntegral bessel = new BesselIntegral()
@@ -41,9 +44,9 @@ namespace charts_test
 
         double computeBessel(int m, double x)
         {
-            return 1.0 / Math.PI * Mathf.integrationMethods[currentMethod].integrate(createBesselIntegral(m, x), 3000);
+            return 1.0 / Math.PI * Mathf.integrationMethods[currentMethod].integrate(createBesselIntegral(m, x), 100000);
         }
-
+        
         Function createBesselFunction(int m)
         {
             return new Function()
@@ -54,9 +57,39 @@ namespace charts_test
                 function = x => computeBessel(m, x),
             };
         }
-        double computeDerivative(Function f, double x)
+        double computeDerivative(Function f, double x, int order = 1)
         {
+            double derivatives = 0;
+            for (int i = 1; i <= order; i++)
+            {
+                derivatives += (f.function(x + (double)i * derivativeStep) - f.function(x - (double)i * derivativeStep)) / ((double)i * 2.0 * derivativeStep);
+            }
+
+            derivatives /= order;
+            return derivatives;
             return (f.function(x + derivativeStep) - f.function(x - derivativeStep)) / (2.0 * derivativeStep);
+        }
+        void plotFunction(Func<double, double> func, double from, double to, int segments)
+        {
+            List<ObservablePoint> points = new List<ObservablePoint>();
+            double step = (to - from) / (segments - 1);
+            for (int i = 0; i < segments; i++)
+            {
+                double position = from + step * i;
+                double value = func(position);
+                points.Add(new ObservablePoint(position, value));
+            }
+
+            var SeriesCollection = new ISeries[]
+            {
+                new LineSeries<ObservablePoint>
+                {
+                    Values = points,
+                    Fill = null, LineSmoothness = 0,GeometrySize = 6.5
+                },
+            };
+
+            chart_plot.plot.Series = SeriesCollection;
         }
         public Bessel()
         {
@@ -72,6 +105,8 @@ namespace charts_test
             x_slider.Value = 0;
 
             onXChanged(0);
+
+            plotFunction(createBesselFunction(1).function, 0, 2*Math.PI, 100);
         }
 
         private void editTextChanged(string text)
@@ -91,14 +126,14 @@ namespace charts_test
         {
             x_value.Content = value.ToString();
 
-            var derivativeValue = computeDerivative(createBesselFunction(0), value);
+            var derivativeValue = computeDerivative(createBesselFunction(0), value, 2);
             var besselValue = computeBessel(1, value);
             bessel_0_derivative_value.Content = derivativeValue.ToString();
             bessel_1_value.Content = besselValue.ToString();
 
             var difference = (derivativeValue + besselValue);
             bessel_difference_value.Content = difference.ToString();
-            bessel_difference_value.Foreground = new SolidColorBrush(Math.Abs(difference) < 1e-10 ? Colors.Green : Colors.Red);
+            bessel_difference_value.Foreground = new SolidColorBrush(Math.Ceiling(Math.Log(Math.Abs(difference), 10)) <= 10 ? Colors.Green : Colors.Red);
         }
     }
 }
