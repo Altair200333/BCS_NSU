@@ -57,18 +57,7 @@ namespace charts_test
                 function = x => computeBessel(m, x),
             };
         }
-        double computeDerivative(Function f, double x, int order = 1)
-        {
-            double derivatives = 0;
-            for (int i = 1; i <= order; i++)
-            {
-                derivatives += (f.function(x + (double)i * derivativeStep) - f.function(x - (double)i * derivativeStep)) / ((double)i * 2.0 * derivativeStep);
-            }
-
-            derivatives /= order;
-            return derivatives;
-            return (f.function(x + derivativeStep) - f.function(x - derivativeStep)) / (2.0 * derivativeStep);
-        }
+        
         void plotFunction(Func<double, double> func, double from, double to, int segments)
         {
             List<ObservablePoint> points = new List<ObservablePoint>();
@@ -126,7 +115,7 @@ namespace charts_test
         {
             x_value.Content = value.ToString();
 
-            var derivativeValue = computeDerivative(createBesselFunction(0), value, 2);
+            var derivativeValue = Mathf.computeDerivative(createBesselFunction(0), value, derivativeStep, 2);
             var besselValue = computeBessel(1, value);
             bessel_0_derivative_value.Content = derivativeValue.ToString();
             bessel_1_value.Content = besselValue.ToString();

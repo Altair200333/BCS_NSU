@@ -71,5 +71,18 @@ namespace charts_test
 
             return integral;
         }
+
+        public static double computeDerivative(Function f, double x, double derivativeStep, int order = 1)
+        {
+            double derivatives = 0;
+            for (int i = 1; i <= order; i++)
+            {
+                derivatives += (f.function(x + (double)i * derivativeStep) - f.function(x - (double)i * derivativeStep)) / ((double)i * 2.0 * derivativeStep);
+            }
+
+            derivatives /= order;
+            return derivatives;
+            return (f.function(x + derivativeStep) - f.function(x - derivativeStep)) / (2.0 * derivativeStep);
+        }
     }
 }

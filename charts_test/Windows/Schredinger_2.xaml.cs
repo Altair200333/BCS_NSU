@@ -78,7 +78,31 @@ namespace charts_test
             }
         }
 
+        class NewtonSolver : Solver
+        {
+            public double epsilon = 0.0001;
+            public double start;
+            public List<double> history;
+            public NewtonSolver(double start)
+            {
+                this.start = start;
+                solve = func =>
+                {
+                    history = new List<double>();
+
+                    double x = this.start;
+                    while (Math.Abs(func.function(x)) > epsilon)
+                    {
+                        history.Add(x);
+                        x = x - func.function(x)/Mathf.computeDerivative(func, x, 0.00001);
+                    }
+                    return x;
+                };
+            }
+        }
+
         private DihotomySolver dihotomy;
+        private NewtonSolver newton;
         ISeries[] plotFunction(Func<double, double> func, double from, double to, int segments)
         {
             List<ObservablePoint> points = new List<ObservablePoint>();
@@ -137,7 +161,8 @@ namespace charts_test
                 setValidation(U0_value, setU0Value(U0_value.Text));
             };
             recalculate_btn.Click += delegate(object sender, RoutedEventArgs args) { recalculate(); };
-            dihotomy = new DihotomySolver(X0, X1);
+            dihotomy = new DihotomySolver(X0, X1, 0.0001);
+            newton = new NewtonSolver(0.5);
         }
 
         private void recalculate()
@@ -145,7 +170,31 @@ namespace charts_test
             var equation = createEquation(a, U0);
             chart_plot.plot.Series = plotFunction(equation.function, 0.01, 0.99, 1000);
 
+            //showDihotomySolution(equation);
+            showNewtonSolution(equation);
+        }
+
+        private void showNewtonSolution(Function equation)
+        {
+            var solution = newton.solve(equation);
+            solution_x.Content = solution.ToString();
+            value_at_x.Content = equation.function(solution).ToString();
+
+            List<Vector2> points = new List<Vector2>();
+            for (int i = 0; i < newton.history.Count; i++)
+            {
+                points.Add(new Vector2((float)newton.history[i], 0));
+
+            }
+            var series = chart_plot.plot.Series.ToList();
+            series.AddRange(plotPoints(points));
+            chart_plot.plot.Series = series;
+        }
+
+        private void showDihotomySolution(Function equation)
+        {
             var solution = dihotomy.solve(equation);
+
             solution_x.Content = solution.ToString();
             value_at_x.Content = equation.function(solution).ToString();
             var history = dihotomy.history;
@@ -159,7 +208,6 @@ namespace charts_test
             var series = chart_plot.plot.Series.ToList();
             series.AddRange(plotPoints(points));
             chart_plot.plot.Series = series;
-
         }
 
         void setValidation(TextBox box, bool validated)
