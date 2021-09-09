@@ -29,7 +29,12 @@
         <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
                       HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Black" />
         <DockPanel  Grid.Column="2" Background="GhostWhite">
-            <local:UserControl1 x:Name="chart_plot" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+            <TabControl >
+                <TabItem Header="plot">
+                    <local:UserControl1 x:Name="chart_plot" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+                </TabItem>
+               
+            </TabControl>
         </DockPanel>
 
     </Grid>

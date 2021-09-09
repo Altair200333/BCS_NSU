@@ -84,5 +84,10 @@ namespace charts_test
             return derivatives;
             return (f.function(x + derivativeStep) - f.function(x - derivativeStep)) / (2.0 * derivativeStep);
         }
+
+        public static double ctg(double x)
+        {
+            return 1.0 / Math.Tan(x);
+        }
     }
 }

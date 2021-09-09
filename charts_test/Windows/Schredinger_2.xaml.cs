@@ -36,7 +36,7 @@ namespace charts_test
                 name = "mod schred",
                 function = x =>
                 {
-                    return 1.0 / Math.Tan(
+                    return Mathf.ctg(
                         Math.Sqrt(2 * a * a * U0 * (1 - x))
                     ) - Math.Sqrt(1 / x - 1.0);
                 }
@@ -101,8 +101,53 @@ namespace charts_test
             }
         }
 
+        class SimpleIterationsSolver : Solver
+        {
+            public double epsilon = 0.0001;
+
+            private double a;
+            private double U0;
+            private double start;
+            public Func<double, double> g;
+
+            public List<Vector2> points;
+            public void setParams(double a, double U0, double start)
+            {
+                this.a = a;
+                this.U0 = U0;
+                this.start = start;
+                g = x =>
+                {
+                    return 1.0 - Math.Atan(1.0/Math.Sqrt(1.0/x - 1))/(2.0*this.a* this.a * this.U0);
+                };
+            }
+            public SimpleIterationsSolver()
+            {
+                solve = func =>
+                {
+                    points = new List<Vector2>();
+
+                    double x = start;
+                    double y = x;
+                    while (true)
+                    {
+                        y = g(x);
+                        if (Math.Abs(y - x) < epsilon) 
+                            break;
+
+                        points.Add(new Vector2((float)x, (float)y));
+                        x = y;
+                    }
+
+                    return y;
+                };
+            }
+        }
+
+
         private DihotomySolver dihotomy;
         private NewtonSolver newton;
+        private SimpleIterationsSolver simple;
         ISeries[] plotFunction(Func<double, double> func, double from, double to, int segments)
         {
             List<ObservablePoint> points = new List<ObservablePoint>();
@@ -163,15 +208,34 @@ namespace charts_test
             recalculate_btn.Click += delegate(object sender, RoutedEventArgs args) { recalculate(); };
             dihotomy = new DihotomySolver(X0, X1, 0.0001);
             newton = new NewtonSolver(0.5);
+            simple = new SimpleIterationsSolver();
         }
 
         private void recalculate()
         {
             var equation = createEquation(a, U0);
-            chart_plot.plot.Series = plotFunction(equation.function, 0.01, 0.99, 1000);
+            chart_plot.plot.Series = plotFunction(equation.function, 0.01, 0.99, 200);
 
             //showDihotomySolution(equation);
-            showNewtonSolution(equation);
+            //showNewtonSolution(equation);
+            showSimpleSolution(equation);
+        }
+
+        private void showSimpleSolution(Function equation)
+        {
+            simple.setParams(a, U0, 0.5);
+            var solution = simple.solve(equation);
+            solution_x.Content = solution.ToString();
+            value_at_x.Content = equation.function(solution).ToString();
+
+            var series = chart_plot.plot.Series.ToList();
+
+            series.AddRange(plotFunction(simple.g, 0.01, 0.99, 200));
+            chart_plot.plot.Series = series;
+
+            series = chart_plot.plot.Series.ToList();
+            series.AddRange(plotPoints(simple.points));
+            chart_plot.plot.Series = series;
         }
 
         private void showNewtonSolution(Function equation)
@@ -184,7 +248,6 @@ namespace charts_test
             for (int i = 0; i < newton.history.Count; i++)
             {
                 points.Add(new Vector2((float)newton.history[i], 0));
-
             }
             var series = chart_plot.plot.Series.ToList();
             series.AddRange(plotPoints(points));
