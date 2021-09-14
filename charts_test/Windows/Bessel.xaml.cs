@@ -60,25 +60,21 @@ namespace charts_test
         
         void plotFunction(Func<double, double> func, double from, double to, int segments)
         {
-            List<ObservablePoint> points = new List<ObservablePoint>();
+            List<double> y = new List<double>();
+            List<double> x = new List<double>();
+
             double step = (to - from) / (segments - 1);
             for (int i = 0; i < segments; i++)
             {
                 double position = from + step * i;
                 double value = func(position);
-                points.Add(new ObservablePoint(position, value));
+                y.Add(value);
+                x.Add(position);
             }
 
-            var SeriesCollection = new ISeries[]
-            {
-                new LineSeries<ObservablePoint>
-                {
-                    Values = points,
-                    Fill = null, LineSmoothness = 0,GeometrySize = 6.5
-                },
-            };
-
-            chart_plot.plot.Series = SeriesCollection;
+            WpfPlot1.Plot.Clear();
+            WpfPlot1.Plot.AddScatter(x.ToArray(), y.ToArray());
+            WpfPlot1.Render();
         }
         public Bessel()
         {

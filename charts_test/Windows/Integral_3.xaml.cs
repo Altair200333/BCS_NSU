@@ -41,6 +41,7 @@ namespace charts_test
                 x.Add(position);
 
             }
+
             WpfPlot1.Plot.Clear();
             WpfPlot1.Plot.AddScatter(x.ToArray(), y.ToArray());
             WpfPlot1.Render();

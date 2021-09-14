@@ -148,46 +148,36 @@ namespace charts_test
         private DihotomySolver dihotomy;
         private NewtonSolver newton;
         private SimpleIterationsSolver simple;
-        ISeries[] plotFunction(Func<double, double> func, double from, double to, int segments)
+        void plotFunction(Func<double, double> func, double from, double to, int segments, bool scatter = false)
         {
-            List<ObservablePoint> points = new List<ObservablePoint>();
+            List<double> y = new List<double>();
+            List<double> x = new List<double>();
             double step = (to - from) / (segments - 1);
             for (int i = 0; i < segments; i++)
             {
                 double position = from + step * i;
                 double value = func(position);
-                points.Add(new ObservablePoint(position, value));
+                y.Add(value);
+                x.Add(position);
+
             }
 
-            var SeriesCollection = new ISeries[]
+            if(!scatter)
+                WpfPlot1.Plot.AddScatter(x.ToArray(), y.ToArray());
+            else
             {
-                new LineSeries<ObservablePoint>
-                {
-                    Values = points,
-                    Fill = null, LineSmoothness = 0,GeometrySize = 2.5
-                },
-            };
-
-            return SeriesCollection;
+                WpfPlot1.Plot.AddScatterPoints(x.ToArray(), y.ToArray());
+            }
+            WpfPlot1.Render();
         }
-        ISeries[] plotPoints(List<Vector2> data)
+        void plotPoints(List<Vector2> data)
         {
-            List<ObservablePoint> points = new List<ObservablePoint>();
-            for (int i = 0; i < data.Count; i++)
-            {
-                points.Add(new ObservablePoint(data[i].X, data[i].Y));
-            }
+            if(data.Count<2)
+                return;
 
-            var SeriesCollection = new ISeries[]
-            {
-                new ScatterSeries<ObservablePoint>
-                {
-                    Values = points,
-                    Fill = null, GeometrySize = 10.5
-                },
-            };
+            WpfPlot1.Plot.AddScatterPoints(data.Select(x=>(double)x.X).ToArray(), data.Select(x => (double)x.Y).ToArray());
 
-            return SeriesCollection;
+            WpfPlot1.Render();
         }
         private double a = 0.1;
         private double U0 = 0.1;
@@ -221,13 +211,16 @@ namespace charts_test
                 selected = method_combo.SelectedIndex;
                 recalculate();
             };
+
+            recalculate();
         }
 
         private void recalculate()
         {
             var equation = createEquation(a, U0);
-            chart_plot.plot.Series = plotFunction(equation.function, 0.01, 0.99, 200);
-
+            WpfPlot1.Plot.Clear();
+            plotFunction(equation.function, 0.01, 0.99, 200);
+            WpfPlot1.Render();
             if (selected == 0)
             {
                 showDihotomySolution(equation);
@@ -244,19 +237,14 @@ namespace charts_test
 
         private void showSimpleSolution(Function equation)
         {
-            simple.setParams(a, U0, 0.6);
+            simple.setParams(a, U0, 0.5);
             var solution = simple.solve(equation);
             solution_x.Content = solution.ToString();
             value_at_x.Content = equation.function(solution).ToString();
 
-            var series = chart_plot.plot.Series.ToList();
-
-            series.AddRange(plotFunction(simple.g, 0.01, 0.99, 200));
-            chart_plot.plot.Series = series;
-
-            series = chart_plot.plot.Series.ToList();
-            series.AddRange(plotPoints(simple.points));
-            chart_plot.plot.Series = series;
+            plotFunction(simple.g, 0.01, 0.99, 200);
+            
+            plotPoints(simple.points);
         }
 
         private void showNewtonSolution(Function equation)
@@ -270,9 +258,7 @@ namespace charts_test
             {
                 points.Add(new Vector2((float)newton.history[i], 0));
             }
-            var series = chart_plot.plot.Series.ToList();
-            series.AddRange(plotPoints(points));
-            chart_plot.plot.Series = series;
+            plotPoints(points);
         }
 
         private void showDihotomySolution(Function equation)
@@ -289,9 +275,7 @@ namespace charts_test
                 points.Add(new Vector2((float) history[i], 0));
             }
 
-            var series = chart_plot.plot.Series.ToList();
-            series.AddRange(plotPoints(points));
-            chart_plot.plot.Series = series;
+            plotPoints(points);
         }
 
         void setValidation(TextBox box, bool validated)
