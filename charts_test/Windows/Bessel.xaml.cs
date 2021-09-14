@@ -122,7 +122,7 @@ namespace charts_test
 
             var difference = (derivativeValue + besselValue);
             bessel_difference_value.Content = difference.ToString();
-            bessel_difference_value.Foreground = new SolidColorBrush(Math.Ceiling(Math.Log(Math.Abs(difference), 10)) <= 10 ? Colors.Green : Colors.Red);
+            bessel_difference_value.Foreground = new SolidColorBrush(Math.Floor(Math.Log(Math.Abs(difference), 10)) <= -10 ? Colors.Green : Colors.Red);
         }
     }
 }

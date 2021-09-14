@@ -9,6 +9,5 @@
     </UserControl.DataContext>
     <Grid>
         <lvc:CartesianChart Name="plot" Series="{Binding SeriesCollection}" ZoomMode="Both"></lvc:CartesianChart>
-        
     </Grid>
 </UserControl>
