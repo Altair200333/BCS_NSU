@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ScottPlot;
 using ScottPlot.Control;
 using Color = System.Drawing.Color;
 
@@ -22,7 +23,7 @@ namespace charts_test.Windows
     /// </summary>
     public partial class PolyInt5 : Window
     {
-        void plotFunction(Func<double, double> func, double from, double to, int segments)
+        void plotFunction(Func<double, double> func, double from, double to, int segments, WpfPlot target)
         {
             List<double> y = new List<double>();
             List<double> x = new List<double>();
@@ -36,8 +37,8 @@ namespace charts_test.Windows
 
             }
 
-            WpfPlot1.Plot.AddScatter(x.ToArray(), y.ToArray());
-            WpfPlot1.Render();
+            target.Plot.AddScatter(x.ToArray(), y.ToArray());
+            target.Render();
         }
         void plotPoints(List<Vector2> data, Color color, float size)
         {
@@ -67,7 +68,7 @@ namespace charts_test.Windows
         public PolyInt5()
         {
             InitializeComponent();
-            
+
             n_slider.ValueChanged += N_sliderOnValueChanged;
             updateN((int)n_slider.Value);
         }
@@ -121,9 +122,13 @@ namespace charts_test.Windows
 
             var series = createSeries(n);
             WpfPlot1.Plot.Clear();
-            plotFunction(createLagrangePolynom(series).function, 1, 2, 100);
+            plotFunction(createLagrangePolynom(series).function, 1, 2, 100, WpfPlot1);
             plotPoints(series, Color.Red, 9);
             WpfPlot1.Plot.Render();
+
+            WpfPlot2.Plot.Clear();
+            plotFunction(x => createLagrangePolynom(series).function(x) - Math.Log(x), 1, 2, 100, WpfPlot2);
+            WpfPlot2.Plot.Render();
         }
     }
 }
