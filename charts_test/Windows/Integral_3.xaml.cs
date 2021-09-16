@@ -18,10 +18,14 @@ using LiveChartsCore.SkiaSharpView;
 
 namespace charts_test
 {
-   
+    public class IntegralFunction: Function
+    {
+        public double referenceValue;
+    }
+
     public partial class Integral_3 : Window
     {
-        private List<Function> functions = new List<Function>();
+        private List<IntegralFunction> functions = new List<IntegralFunction>();
         private List<int> integrationSteps = new List<int>();
 
         private int currentIntegrationStep = 0;
@@ -124,26 +128,29 @@ namespace charts_test
 
         private void createFunctions()
         {
-            functions.Add(new Function()
+            functions.Add(new IntegralFunction()
             {
                 name = "Square",
                 function = x => x * x,
                 minimum = -2,
-                maximum = 2
+                maximum = 2,
+                referenceValue = 5 + 1.0/3.0
             });
-            functions.Add(new Function()
+            functions.Add(new IntegralFunction()
             {
                 name = "1/(1+x^2)",
                 function = x => 1.0 / (1.0 + x * x),
                 minimum = -1,
-                maximum = 1
+                maximum = 1,
+                referenceValue = 1.5707963267949
             });
-            functions.Add(new Function()
+            functions.Add(new IntegralFunction()
             {
                 name = "1/(x^1/3*e^sinx)",
                 function = x => Math.Pow(x, 1.0 / 3.0) * Math.Exp(Math.Sin(x)),
                 minimum = 0,
-                maximum = 1
+                maximum = 1,
+                referenceValue = 1.2958740087317
             });
         }
 
@@ -161,8 +168,10 @@ namespace charts_test
 
         private void recalculateIntegral()
         {
-            integral_value.Content = Mathf.integrationMethods[currentMethod]
-                .integrate(functions[currentFunction], integrationSteps[currentIntegrationStep]).ToString();
+            double value = Mathf.integrationMethods[currentMethod]
+                .integrate(functions[currentFunction], integrationSteps[currentIntegrationStep]);
+            integral_value.Content = value.ToString();
+            difference_value.Content = (functions[currentFunction].referenceValue - value).ToString();
         }
     }
 }
