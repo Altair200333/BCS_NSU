@@ -16,6 +16,8 @@ using System.Windows.Shapes;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
+using SkiaSharp.Views.WPF;
+using Color = System.Drawing.Color;
 
 namespace charts_test
 {
@@ -47,7 +49,7 @@ namespace charts_test
         {
             public double x0, x1, epsilon;
             public List<double> history;
-            public DihotomySolver(double x0, double x1, double epsilon = 0.001)
+            public DihotomySolver(double x0, double x1, double epsilon = 0.000001)
             {
                 this.x0 = x0;
                 this.x1 = x1;
@@ -59,7 +61,7 @@ namespace charts_test
                     double right = x1;
 
                     double mid = (left + right) * 0.5;
-                    while (Math.Abs(right-left)>epsilon && Math.Sign(func.function(left)) != Math.Sign(func.function(right)))
+                    while (Math.Abs(right-left) > epsilon && Math.Sign(func.function(left)) != Math.Sign(func.function(right)))
                     {
                         mid = (left + right) * 0.5;
                         history.Add(mid);
@@ -118,7 +120,8 @@ namespace charts_test
                 this.start = start;
                 g = x =>
                 {
-                    return 1.0 - Math.Atan(1.0/Math.Sqrt(1.0/x - 1))/(2.0*this.a* this.a * this.U0);
+                    //return 1.0 - Math.Atan(1.0/Math.Sqrt(1.0/x - 1))/(2.0*this.a* this.a * this.U0);
+                    return ((Mathf.ctg(Math.Sqrt(2 * a * a * U0 * (1 - x))) - Math.Sqrt(1 / x - 1.0))*-0.1f + x);
                 };
             }
             public SimpleIterationsSolver()
@@ -132,7 +135,7 @@ namespace charts_test
                     while (true)
                     {
                         y = g(x);
-                        if (Math.Abs(y - x) < epsilon) 
+                        if (double.IsNaN(y) || Math.Abs(y - x) < epsilon) 
                             break;
 
                         points.Add(new Vector2((float)x, (float)y));
@@ -197,7 +200,7 @@ namespace charts_test
                 setValidation(U0_value, setU0Value(U0_value.Text));
             };
             recalculate_btn.Click += delegate(object sender, RoutedEventArgs args) { recalculate(); };
-            dihotomy = new DihotomySolver(X0, X1, 0.0001);
+            dihotomy = new DihotomySolver(X0, X1, 0.000001);
             newton = new NewtonSolver(0.5);
             simple = new SimpleIterationsSolver();
 
@@ -241,10 +244,10 @@ namespace charts_test
             var solution = simple.solve(equation);
             solution_x.Content = solution.ToString();
             value_at_x.Content = equation.function(solution).ToString();
+            plotPoints(simple.points);
 
             plotFunction(simple.g, 0.01, 0.99, 200);
             
-            plotPoints(simple.points);
         }
 
         private void showNewtonSolution(Function equation)
