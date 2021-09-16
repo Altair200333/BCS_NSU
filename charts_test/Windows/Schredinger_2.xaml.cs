@@ -57,9 +57,9 @@ namespace charts_test
                 history = new List<double>();
                 solve = func =>
                 {
-                    double left = x0;
-                    double right = x1;
-
+                    double left = this.x0;
+                    double right = this.x1;
+                    history.Clear();
                     double mid = (left + right) * 0.5;
                     while (Math.Abs(right-left) > epsilon && Math.Sign(func.function(left)) != Math.Sign(func.function(right)))
                     {
@@ -109,7 +109,7 @@ namespace charts_test
 
             private double a;
             private double U0;
-            private double start;
+            public double start;
             public Func<double, double> g;
 
             public List<Vector2> points;
@@ -121,7 +121,7 @@ namespace charts_test
                 g = x =>
                 {
                     //return 1.0 - Math.Atan(1.0/Math.Sqrt(1.0/x - 1))/(2.0*this.a* this.a * this.U0);
-                    return ((Mathf.ctg(Math.Sqrt(2 * a * a * U0 * (1 - x))) - Math.Sqrt(1 / x - 1.0))*-0.1f + x);
+                    return ((Mathf.ctg(Math.Sqrt(2 * a * a * U0 * (1 - x))) - Math.Sqrt(1 / x - 1.0))*-0.05f + x);
                 };
             }
             public SimpleIterationsSolver()
@@ -130,7 +130,7 @@ namespace charts_test
                 {
                     points = new List<Vector2>();
 
-                    double x = start;
+                    double x = this.start;
                     double y = x;
                     while (true)
                     {
@@ -160,7 +160,7 @@ namespace charts_test
             {
                 double position = from + step * i;
                 double value = func(position);
-                y.Add(value);
+                y.Add(Math.Min(100, value));
                 x.Add(position);
 
             }
@@ -182,8 +182,8 @@ namespace charts_test
 
             WpfPlot1.Render();
         }
-        private double a = 0.1;
-        private double U0 = 0.1;
+        private double a = 1;
+        private double U0 = 2;
 
         private double X0 = 0.01;
         private double X1 = 0.99;
@@ -218,11 +218,15 @@ namespace charts_test
             recalculate();
         }
 
+        double computeStart()
+        {
+            return Math.Max(1.0 - Math.Pow(Math.PI,2) * 1.0/(2*a*a*U0), X0);
+        }
         private void recalculate()
         {
             var equation = createEquation(a, U0);
             WpfPlot1.Plot.Clear();
-            plotFunction(equation.function, 0.01, 0.99, 200);
+            plotFunction(equation.function, 0.001, 0.9999, 1000);
             WpfPlot1.Render();
             if (selected == 0)
             {
@@ -240,7 +244,7 @@ namespace charts_test
 
         private void showSimpleSolution(Function equation)
         {
-            simple.setParams(a, U0, 0.5);
+            simple.setParams(a, U0, (computeStart() + 1.0)*0.5);
             var solution = simple.solve(equation);
             solution_x.Content = solution.ToString();
             value_at_x.Content = equation.function(solution).ToString();
@@ -252,6 +256,7 @@ namespace charts_test
 
         private void showNewtonSolution(Function equation)
         {
+            newton.start = (computeStart() + 1.0)*0.5;
             var solution = newton.solve(equation);
             solution_x.Content = solution.ToString();
             value_at_x.Content = equation.function(solution).ToString();
@@ -266,6 +271,9 @@ namespace charts_test
 
         private void showDihotomySolution(Function equation)
         {
+            dihotomy.x0 = computeStart();
+            dihotomy.x1 = 1.0;
+
             var solution = dihotomy.solve(equation);
 
             solution_x.Content = solution.ToString();
