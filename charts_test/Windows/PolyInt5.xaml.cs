@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ScottPlot.Control;
+using Color = System.Drawing.Color;
 
 namespace charts_test.Windows
 {
@@ -35,16 +36,16 @@ namespace charts_test.Windows
 
             }
 
-            WpfPlot1.Plot.Clear();
             WpfPlot1.Plot.AddScatter(x.ToArray(), y.ToArray());
             WpfPlot1.Render();
         }
-        void plotPoints(List<Vector2> data)
+        void plotPoints(List<Vector2> data, Color color, float size)
         {
             if (data.Count < 2)
                 return;
 
-            WpfPlot1.Plot.AddScatterPoints(data.Select(x => (double)x.X).ToArray(), data.Select(x => (double)x.Y).ToArray());
+            WpfPlot1.Plot.AddScatterPoints(data.Select(x => (double)x.X).ToArray(), data.Select(x => (double)x.Y).ToArray(),
+                color, size);
 
             WpfPlot1.Render();
         }
@@ -61,12 +62,68 @@ namespace charts_test.Windows
 
             return res;
         }
+
+        private int n = 4;
         public PolyInt5()
         {
             InitializeComponent();
-            WpfPlot1.Configuration.Quality = QualityMode.LowWhileDragging;
             
-            plotPoints(createSeries(15));
+            n_slider.ValueChanged += N_sliderOnValueChanged;
+            updateN((int)n_slider.Value);
+        }
+
+        private void N_sliderOnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            updateN((int)n_slider.Value);
+        }
+
+        double Li(List<Vector2> points, int i, double x)
+        {
+            double result = 1.0;
+            for (int j = 0; j < points.Count; j++)
+            {
+                if(j==i)
+                    continue;
+
+                result *= x - points[j].X;
+            }
+
+            return result;
+        }
+
+        double Si(List<Vector2> points, int i, double x)
+        {
+            return points[i].Y * Li(points, i, x) / Li(points, i, points[i].X);
+        }
+        Function createLagrangePolynom(List<Vector2> points)
+        {
+            Function f = new Function()
+            {
+                minimum = 1,
+                maximum = 2,
+                function = x =>
+                {
+                    double result = 0.0;
+                    for (int j = 0; j < points.Count; j++)
+                    {
+                        result += Si(points, j, x);
+                    }
+
+                    return result;
+                }
+            };
+            return f;
+        }
+        private void updateN(int n_value)
+        {
+            n = n_value;
+            n_label.Content = n.ToString();
+
+            var series = createSeries(n);
+            WpfPlot1.Plot.Clear();
+            plotFunction(createLagrangePolynom(series).function, 1, 2, 100);
+            plotPoints(series, Color.Red, 9);
+            WpfPlot1.Plot.Render();
         }
     }
 }

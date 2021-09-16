@@ -17,7 +17,10 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Canvas Grid.Column="0" Background="#FFF0F1FF">
-            
+            <Slider x:Name="n_slider" Canvas.Left="10" Canvas.Top="38" Width="228" SmallChange="1" Maximum="20" Minimum="4"/>
+            <Label Content="n: " Canvas.Left="243" Canvas.Top="30"/>
+            <Label x:Name="n_label" Content="4" Canvas.Left="266" Canvas.Top="30" Foreground="CornflowerBlue"/>
+
         </Canvas>
         <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
                       HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Black" />
