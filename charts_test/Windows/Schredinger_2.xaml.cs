@@ -24,6 +24,7 @@ namespace charts_test
     class Solver
     {
         public Func<Function, double> solve;
+        public int steps = 0;
     }
 
 
@@ -57,6 +58,7 @@ namespace charts_test
                 history = new List<double>();
                 solve = func =>
                 {
+                    steps = 0;
                     double left = this.x0;
                     double right = this.x1;
                     history.Clear();
@@ -73,6 +75,8 @@ namespace charts_test
                         {
                             right = mid;
                         }
+
+                        steps++;
                     }
 
                     return mid;
@@ -90,6 +94,7 @@ namespace charts_test
                 this.start = start;
                 solve = func =>
                 {
+                    steps = 0;
                     history = new List<double>();
 
                     double x = this.start;
@@ -97,6 +102,7 @@ namespace charts_test
                     {
                         history.Add(x);
                         x = x - func.function(x)/Mathf.computeDerivative(func, x, 0.00001);
+                        steps++;
                     }
                     return x;
                 };
@@ -128,6 +134,7 @@ namespace charts_test
             {
                 solve = func =>
                 {
+                    steps = 0;
                     points = new List<Vector2>();
 
                     double x = this.start;
@@ -140,6 +147,7 @@ namespace charts_test
 
                         points.Add(new Vector2((float)x, (float)y));
                         x = y;
+                        steps++;
                     }
 
                     return y;
@@ -228,6 +236,8 @@ namespace charts_test
             WpfPlot1.Plot.Clear();
             plotFunction(equation.function, 0.001, 0.9999, 1000);
             WpfPlot1.Render();
+
+            Solver[] solvers = new Solver[] {dihotomy, newton, simple};
             if (selected == 0)
             {
                 showDihotomySolution(equation);
@@ -240,6 +250,8 @@ namespace charts_test
             {
                 showSimpleSolution(equation);
             }
+
+            iterations_count.Content = solvers[selected].steps;
         }
 
         private void showSimpleSolution(Function equation)
