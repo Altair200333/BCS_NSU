@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,6 +16,8 @@ using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.Kernel.Sketches;
 using LiveChartsCore.SkiaSharpView;
+using ScottPlot;
+using Color = System.Drawing.Color;
 
 namespace charts_test
 {
@@ -32,7 +35,7 @@ namespace charts_test
         private int currentFunction = 0;
         private int currentMethod = 0;
 
-        void plotFunction(Func<double, double> func, double from, double to, int segments)
+        void plotFunction(Func<double, double> func, double from, double to, int segments, WpfPlot plot)
         {
             List<double> y = new List<double>();
             List<double> x = new List<double>();
@@ -46,9 +49,9 @@ namespace charts_test
 
             }
 
-            WpfPlot1.Plot.Clear();
-            WpfPlot1.Plot.AddScatter(x.ToArray(), y.ToArray());
-            WpfPlot1.Render();
+            //plot.Plot.Clear();
+            plot.Plot.AddScatter(x.ToArray(), y.ToArray());
+            plot.Render();
         }
 
         public Integral_3()
@@ -89,6 +92,7 @@ namespace charts_test
         {
             currentMethod = id;
             recalculateIntegral();
+            plotIntegrationConvergence();
         }
 
         private void createAndFillIntegrationSteps()
@@ -157,10 +161,44 @@ namespace charts_test
         public void selectFunction(int id)
         {
             currentFunction = id;
-            plotFunction(functions[id].function, functions[id].minimum, functions[id].maximum, 100);
+            WpfPlot1.Plot.Clear();
+            plotFunction(functions[id].function, functions[id].minimum, functions[id].maximum, 100, WpfPlot1);
             recalculateIntegral();
+
+            plotIntegrationConvergence();
         }
 
+        private void plotIntegrationConvergence()
+        {
+            List<Tuple<int, double>> integralValues = new List<Tuple<int, double>>();
+            for (int i = 0; i < 10; i++)
+            {
+                int steps = (int)Math.Pow(2, i + 1); ;
+                double value = Mathf.integrationMethods[currentMethod].integrate(functions[currentFunction], steps);
+                integralValues.Add(new Tuple<int, double>(steps, value));
+            }
+
+            List<Vector2> differences = new List<Vector2>();
+            for (int i = 0; i < integralValues.Count - 1; i++)
+            {
+                differences.Add(new Vector2(integralValues[i].Item1,
+                    (float) (integralValues[i + 1].Item2 - integralValues[i].Item2)));
+            }
+
+            WpfPlot2.Plot.Clear();
+            plotPoints(differences, Color.Red, 3, WpfPlot2, "AA");
+        }
+
+        void plotPoints(List<Vector2> data, Color color, float size, WpfPlot plot, string label)
+        {
+            if (data.Count < 2)
+                return;
+
+            plot.Plot.AddScatter(data.Select(x => (double)x.X).ToArray(), data.Select(x => (double)x.Y).ToArray(),
+                color, size, label: label);
+
+            plot.Render();
+        }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             recalculateIntegral();

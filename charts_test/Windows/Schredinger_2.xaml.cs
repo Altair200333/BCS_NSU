@@ -111,7 +111,7 @@ namespace charts_test
 
         class SimpleIterationsSolver : Solver
         {
-            public double epsilon = 0.000001;
+            public double epsilon = double.Epsilon;
 
             private double a;
             private double U0;

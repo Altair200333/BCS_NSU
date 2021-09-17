@@ -18,26 +18,33 @@
         </Grid.ColumnDefinitions>
         <Canvas Grid.Column="0" Background="#FFF0F1FF">
             <Label Content="Integral value: " Canvas.Top="10" Canvas.Left="10" />
-            <Button Content="recalculate" Canvas.Top="69" Width="75" Click="Button_Click" Canvas.Left="10"/>
+            <Button Content="recalculate" Canvas.Top="69" Width="75" Click="Button_Click" Canvas.Left="10" />
             <Label x:Name="integral_value" Content="0" Canvas.Top="10" Canvas.Left="92" Foreground="#FF1919FD" />
             <ComboBox x:Name="methods_combo" Canvas.Left="10" Canvas.Top="108" Width="120" SelectedIndex="0">
-                <Label Content="integral 1"/>
-                <Label Content="integral 2"/>
+                <Label Content="integral 1" />
+                <Label Content="integral 2" />
             </ComboBox>
             <ComboBox x:Name="functions_combo" Canvas.Left="10" Canvas.Top="188" Width="120" SelectedIndex="0">
-                <Label Content="test 1"/>
-                <Label Content="integral 2"/>
+                <Label Content="test 1" />
+                <Label Content="integral 2" />
             </ComboBox>
             <ComboBox x:Name="intergration_steps" Canvas.Left="132" Canvas.Top="67" Width="120" SelectedIndex="0">
-                <Label Content="2"/>
+                <Label Content="2" />
             </ComboBox>
             <Label Content="Difference: " Canvas.Top="36" Canvas.Left="10" />
             <Label x:Name="difference_value" Content="0" Canvas.Top="36" Canvas.Left="92" Foreground="#FF1919FD" />
         </Canvas>
         <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
                       HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Black" />
-        <DockPanel  Grid.Column="2" Background="GhostWhite">
-            <scot:WpfPlot Name="WpfPlot1"></scot:WpfPlot>
+        <DockPanel Grid.Column="2" Background="GhostWhite">
+            <TabControl>
+                <TabItem Header="graph">
+                    <scot:WpfPlot Name="WpfPlot1" />
+                </TabItem>
+                <TabItem Header="convergence">
+                    <scot:WpfPlot Name="WpfPlot2" />
+                </TabItem>
+            </TabControl>
         </DockPanel>
 
     </Grid>
