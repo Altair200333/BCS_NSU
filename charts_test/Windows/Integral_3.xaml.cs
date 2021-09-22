@@ -171,9 +171,9 @@ namespace charts_test
         private void plotIntegrationConvergence()
         {
             List<Tuple<int, double>> integralValues = new List<Tuple<int, double>>();
-            for (int i = 0; i < 10; i++)
+            for (int i = 3; i < 12; i++)
             {
-                int steps = (int)Math.Pow(2, i + 1); ;
+                int steps = (int)Math.Pow(2, i); ;
                 double value = Mathf.integrationMethods[currentMethod].integrate(functions[currentFunction], steps);
                 integralValues.Add(new Tuple<int, double>(steps, value));
             }
