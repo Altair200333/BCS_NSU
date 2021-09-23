@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,6 +16,9 @@ using System.Windows.Shapes;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
+using ScottPlot;
+using Color = System.Drawing.Color;
+using Vector = System.Windows.Vector;
 
 namespace charts_test
 {
@@ -44,9 +48,11 @@ namespace charts_test
 
         double computeBessel(int m, double x)
         {
-            return 1.0 / Math.PI * Mathf.integrationMethods[currentMethod].integrate(createBesselIntegral(m, x), 100000);
+            return 1.0 / Math.PI * Mathf.integrationMethods[currentMethod].integrate(createBesselIntegral(m, x), integralSteps);
         }
-        
+
+        private static int integralSteps => 100000;
+
         Function createBesselFunction(int m)
         {
             return new Function()
@@ -76,6 +82,16 @@ namespace charts_test
             WpfPlot1.Plot.AddScatter(x.ToArray(), y.ToArray());
             WpfPlot1.Render();
         }
+        void plotPoints(List<Vector> data, Color color, float size, WpfPlot plot, string label)
+        {
+            if (data.Count < 2)
+                return;
+
+            plot.Plot.AddScatter(data.Select(x => (double)x.X).ToArray(), data.Select(x => (double)x.Y).ToArray(),
+                color, size, label: label);
+
+            plot.Render();
+        }
         public Bessel()
         {
             InitializeComponent();
@@ -91,7 +107,10 @@ namespace charts_test
 
             onXChanged(0);
 
-            plotFunction(createBesselFunction(1).function, 0, 2*Math.PI, 100);
+            plotDifferences();
+
+            //plotFunction(createBesselFunction(1).function, 0, 2*Math.PI, 100);
+
         }
 
         private void editTextChanged(string text)
@@ -111,7 +130,8 @@ namespace charts_test
         {
             x_value.Content = value.ToString();
 
-            var derivativeValue = Mathf.computeDerivative(createBesselFunction(0), value, derivativeStep, 2);
+            var zero_bessel = createBesselFunction(0);
+            var derivativeValue = Mathf.computeDerivative(zero_bessel, value, derivativeStep, 2);
             var besselValue = computeBessel(1, value);
             bessel_0_derivative_value.Content = derivativeValue.ToString();
             bessel_1_value.Content = besselValue.ToString();
@@ -119,6 +139,26 @@ namespace charts_test
             var difference = (derivativeValue + besselValue);
             bessel_difference_value.Content = difference.ToString();
             bessel_difference_value.Foreground = new SolidColorBrush(Math.Floor(Math.Log(Math.Abs(difference), 10)) <= -10 ? Colors.Green : Colors.Red);
+        }
+
+        private void plotDifferences()
+        {
+            var zero_bessel = createBesselFunction(0);
+            int steps = 200;
+            Vector[] differences = new Vector[steps];
+
+            Parallel.For(0, steps, i =>
+            //for (int i = 0; i < steps; i++)
+            {
+                double pos = 2.0 * Math.PI * i / steps;
+                var derivativeValue = Mathf.computeDerivative(zero_bessel, pos, derivativeStep, 2);
+                var besselValue = computeBessel(1, pos);
+                var difference = derivativeValue + besselValue;
+                differences[i] = new Vector(pos, Math.Abs(difference));
+            }
+            );
+            WpfPlot1.Plot.Clear();
+            plotPoints(differences.ToList(), Color.Green, 2, WpfPlot1, "diff");
         }
     }
 }

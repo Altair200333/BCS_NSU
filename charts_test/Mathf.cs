@@ -89,5 +89,20 @@ namespace charts_test
         {
             return 1.0 / Math.Tan(x);
         }
+
+        static double recfact(double start, long n)
+        {
+            double i;
+            if (n <= 16)
+            {
+                double r = start;
+                for (i = start + 1; i < start + n; i++) 
+                    r *= i;
+                return r;
+            }
+            i = n / 2;
+            return recfact(start, (long) i) * recfact(start + i, (long) (n - i));
+        }
+        public static double factorial(long n) { return recfact(1, n); }
     }
 }

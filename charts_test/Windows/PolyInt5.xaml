@@ -20,12 +20,13 @@
             <Slider x:Name="n_slider" Canvas.Left="10" Canvas.Top="38" Width="228" SmallChange="1" Maximum="20" Minimum="4"/>
             <Label Content="n: " Canvas.Left="243" Canvas.Top="30"/>
             <Label x:Name="n_label" Content="4" Canvas.Left="266" Canvas.Top="30" Foreground="CornflowerBlue"/>
+            <ComboBox x:Name="method_combo" Canvas.Left="10" Canvas.Top="113" Width="120"/>
 
         </Canvas>
         <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
                       HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Black" />
         <DockPanel  Grid.Column="2" Background="GhostWhite">
-            
+
             <TabControl >
                 <TabItem Header="interpolation">
                     <scot:WpfPlot Name="WpfPlot1"></scot:WpfPlot>
@@ -33,7 +34,7 @@
                 <TabItem Header="difference">
                     <scot:WpfPlot Name="WpfPlot2"></scot:WpfPlot>
                 </TabItem>
-               
+
             </TabControl>
 
         </DockPanel>
