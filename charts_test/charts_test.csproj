@@ -110,6 +110,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DifferentialMath.cs" />
     <Compile Include="PlotTools.cs" />
     <Compile Include="Windows\Bessel.xaml.cs">
       <DependentUpon>Bessel.xaml</DependentUpon>
@@ -126,6 +127,9 @@
     </Compile>
     <Compile Include="Windows\PolyInt5.xaml.cs">
       <DependentUpon>PolyInt5.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\PreyPredator.xaml.cs">
+      <DependentUpon>PreyPredator.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\Schredinger_2.xaml.cs">
       <DependentUpon>Schredinger_2.xaml</DependentUpon>
@@ -166,6 +170,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Windows\PolyInt5.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\PreyPredator.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -22,7 +22,7 @@
             <Label Content="Runge–Kutta x2" Canvas.Left="58" Canvas.Top="10"/>
             <Label Content="Euler" Canvas.Left="58" Canvas.Top="62"/>
             <Label x:Name="dt_value" Content="0" Canvas.Left="237" Canvas.Top="99"/>
-            <Slider x:Name="dt_slider" Canvas.Left="10" Canvas.Top="107" Width="206" Minimum="0.001" Maximum="0.2"/>
+            <Slider x:Name="dt_slider" Canvas.Left="10" Canvas.Top="107" Width="206" Minimum="0.003" Maximum="0.2"/>
             <Label Content="dt: " Canvas.Left="216" Canvas.Top="99"/>
             <Label Content="Green" Canvas.Left="10" Canvas.Top="36" Foreground="Green"/>
             <Label Content="Runge–Kutta x4" Canvas.Left="58" Canvas.Top="36"/>

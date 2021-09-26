@@ -21,88 +21,7 @@ namespace charts_test.Windows
     /// </summary>
     public partial class KoshiProblem : Window
     {
-        //x' = f(t, x)
-        class DifferentialEquation
-        {
-            public double x0 = 1.0;
-            public double t0 = 0.0;
-
-            //right side of x' = f(t, x)
-            //f(t, x) -> double
-            public Func<double, double, double> right;
-            public Func<double, double> exactSolution;
-        }
-
-        class DifferentialEquationSolver
-        {
-            public double dt { get; set; }
-            public DifferentialEquation equation;
-
-            //g(Xn-1, Tn-1, dt, f(t, x))
-            public Func<double, double, double, DifferentialEquation, double> Xn;
-
-            public List<Vector> solve()
-            {
-                List<Vector> result = new List<Vector>();
-
-                double x = equation.x0;
-                double t = equation.t0;
-
-                int steps = (int) Math.Round((3.0 - t) / dt) + 1;
-                for (int i = 0; i < steps; i++)
-                {
-                    if (t > 3 + 0.001)
-                        break;
-                    result.Add(new Vector(t, x));
-
-                    x = Xn(x, t, dt, equation);
-                    t += dt;
-                }
-
-                return result;
-            }
-        }
-
-        class EulerSolver : DifferentialEquationSolver
-        {
-            public EulerSolver()
-            {
-                Xn = (x, t, dt, f) => { return x + dt * f.right(t, x); };
-            }
-        }
-
-        class RungeKuttaSecondOrder : DifferentialEquationSolver
-        {
-            public RungeKuttaSecondOrder()
-            {
-                Xn = (x, t, dt, f) => { return x + dt * f.right(t + dt * 0.5, x + dt * f.right(t, x) * 0.5); };
-            }
-        }
-        class RungeKuttaFourthOrder : DifferentialEquationSolver
-        {
-            public RungeKuttaFourthOrder()
-            {
-                Xn = (x, t, dt, f) =>
-                {
-                    double k1 = f.right(t, x);
-                    double k2 = f.right(t + dt*0.5, x + dt*0.5*k1);
-                    double k3 = f.right(t + dt*0.5, x + dt*0.5*k2);
-                    double k4 = f.right(t + dt, x + dt*k3);
-
-                    return x + dt/6.0*(k1 + 2 * k2 + 2 * k3 + k4);
-                };
-            }
-        }
-        class KoshiEquation : DifferentialEquation
-        {
-            public KoshiEquation()
-            {
-                x0 = 1.0;
-                t0 = 0.0;
-                right = (t, x) => -x;
-                exactSolution += x => Math.Exp(-x);
-            }
-        }
+        
 
         private double dt = 0.1;
 
@@ -176,7 +95,7 @@ namespace charts_test.Windows
 
         private void plotSolution(DifferentialEquationSolver solver, Color color)
         {
-            var points = solver.solve();
+            var points = solver.solve(3.0);
             PlotTools.plotFunction(points, color, pointSize, WpfPlot1);
 
             List<Vector> differences = new List<Vector>();
