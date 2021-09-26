@@ -195,6 +195,8 @@ namespace charts_test.Windows
             pointSize = Math.Max((float) (dt * 20), 1.5f);
             eulerSolver.dt = dt;
             rungaKuttaSecondOrderSolver.dt = dt;
+            rungaKuttaFourthOrderSolver.dt = dt;
+
             dt_value.Content = dt.ToString(CultureInfo.CurrentCulture);
             dt_slider.Value = dt;
         }
