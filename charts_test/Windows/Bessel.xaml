@@ -25,6 +25,8 @@
             <Label Content="J1(x)" Canvas.Top="56" Canvas.Left="10"/>
             <Label x:Name="bessel_difference_value" Content="0" Canvas.Top="87" Canvas.Left="51" Foreground="#FF1919FD" />
             <TextBox x:Name="derivative_edit" Height="23" Canvas.Left="10" TextWrapping="Wrap" Text="0.001" Canvas.Top="220" Width="120"/>
+            <Button Content="recalculate" Canvas.Left="10" Canvas.Top="258" Width="75" Click="Button_Click"/>
+            <TextBox x:Name="integral_steps" Height="23" Canvas.Left="165" TextWrapping="Wrap" Text="1000" Canvas.Top="220" Width="120"/>
         </Canvas>
         <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
                       HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Black" />

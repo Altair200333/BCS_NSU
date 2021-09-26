@@ -2,8 +2,9 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:charts_test"
-             StartupUri="Windows/PolyInt5.xaml">
+             StartupUri="Windows/KoshiProblem.xaml">
     <Application.Resources>
          
+
     </Application.Resources>
 </Application>

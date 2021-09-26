@@ -110,6 +110,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="PlotTools.cs" />
     <Compile Include="Windows\Bessel.xaml.cs">
       <DependentUpon>Bessel.xaml</DependentUpon>
     </Compile>
@@ -120,6 +121,9 @@
       <DependentUpon>Integral_3.xaml</DependentUpon>
     </Compile>
     <Compile Include="Mathf.cs" />
+    <Compile Include="Windows\KoshiProblem.xaml.cs">
+      <DependentUpon>KoshiProblem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\PolyInt5.xaml.cs">
       <DependentUpon>PolyInt5.xaml</DependentUpon>
     </Compile>
@@ -142,6 +146,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\Integral_3.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\KoshiProblem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -135,7 +135,7 @@ namespace charts_test.Windows
             double res = 1;
             for (int i = 0; i < n; i++)
             {
-                res *= (q - i);
+                res *= (q - (double)i);
             }
             return res/Mathf.factorial(n);
         }
@@ -152,7 +152,7 @@ namespace charts_test.Windows
                 {
                     double result = 0.0;
                     double q = (x - points[0].X) / h;
-                    result += differences[0][0];
+                    result += points[0].Y;
                     for (int j = 1; j < differences.Count; j++)
                     {
                         result += differences[j][0] * Pn(q, j);

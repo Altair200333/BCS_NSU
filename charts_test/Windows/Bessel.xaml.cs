@@ -34,6 +34,8 @@ namespace charts_test
     {
         private static int currentMethod = 0;
         private double derivativeStep = 0.00001;
+        private int integralSteps = 10000;
+
         BesselIntegral createBesselIntegral(int m, double x)
         {
             BesselIntegral bessel = new BesselIntegral()
@@ -51,7 +53,6 @@ namespace charts_test
             return 1.0 / Math.PI * Mathf.integrationMethods[currentMethod].integrate(createBesselIntegral(m, x), integralSteps);
         }
 
-        private static int integralSteps => 100000;
 
         Function createBesselFunction(int m)
         {
@@ -98,7 +99,12 @@ namespace charts_test
 
             derivative_edit.TextChanged += delegate(object sender, TextChangedEventArgs args)
             { editTextChanged(derivative_edit.Text); };
-            editTextChanged("0.00001");
+
+            integral_steps.TextChanged += delegate(object sender, TextChangedEventArgs args)
+            { integralStepsChanged(integral_steps.Text); };
+
+            editTextChanged(derivativeStep.ToString());
+            integralStepsChanged(integralSteps.ToString());
 
             x_slider.ValueChanged += delegate(object sender, RoutedPropertyChangedEventArgs<double> args)
             { onXChanged(x_slider.Value);};
@@ -112,7 +118,18 @@ namespace charts_test
             //plotFunction(createBesselFunction(1).function, 0, 2*Math.PI, 100);
 
         }
-
+        private void integralStepsChanged(string text)
+        {
+            if (int.TryParse(text, NumberStyles.Any, CultureInfo.CreateSpecificCulture("en-US"), out var steps))
+            {
+                if (steps > 0)
+                {
+                    integral_steps.Text = text;
+                    integralSteps = steps;
+                    onXChanged(x_slider.Value);
+                }
+            }
+        }
         private void editTextChanged(string text)
         {
             if (double.TryParse(text, NumberStyles.Any, CultureInfo.CreateSpecificCulture("en-US"), out var derivative ))
@@ -159,6 +176,11 @@ namespace charts_test
             );
             WpfPlot1.Plot.Clear();
             plotPoints(differences.ToList(), Color.Green, 2, WpfPlot1, "diff");
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            plotDifferences();
         }
     }
 }

@@ -132,14 +132,14 @@ namespace charts_test
 
         private void createFunctions()
         {
-            functions.Add(new IntegralFunction()
-            {
-                name = "Square",
-                function = x => x * x,
-                minimum = -2,
-                maximum = 2,
-                referenceValue = 5 + 1.0/3.0
-            });
+            //functions.Add(new IntegralFunction()
+            //{
+            //    name = "Square",
+            //    function = x => x * x,
+            //    minimum = -2,
+            //    maximum = 2,
+            //    referenceValue = 5 + 1.0/3.0
+            //});
             functions.Add(new IntegralFunction()
             {
                 name = "1/(1+x^2)",
@@ -171,18 +171,18 @@ namespace charts_test
         private void plotIntegrationConvergence()
         {
             List<Tuple<int, double>> integralValues = new List<Tuple<int, double>>();
-            for (int i = 3; i < 12; i++)
+            for (int i = 3; i < 18; i++)
             {
-                int steps = (int)Math.Pow(2, i); ;
+                int steps = (int)Math.Pow(2, i);
                 double value = Mathf.integrationMethods[currentMethod].integrate(functions[currentFunction], steps);
-                integralValues.Add(new Tuple<int, double>(steps, value));
+                integralValues.Add(new Tuple<int, double>(i, value));
             }
 
             List<Vector2> differences = new List<Vector2>();
             for (int i = 0; i < integralValues.Count - 1; i++)
             {
-                differences.Add(new Vector2(integralValues[i].Item1,
-                    (float) (integralValues[i + 1].Item2 - integralValues[i].Item2)));
+                differences.Add(new Vector2(integralValues[i].Item1,(float) Math.Log10(Math.Abs(
+                    (float) (integralValues[i + 1].Item2 - integralValues[i].Item2)))));
             }
 
             WpfPlot2.Plot.Clear();

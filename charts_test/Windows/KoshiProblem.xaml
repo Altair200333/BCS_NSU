@@ -1,0 +1,52 @@
+﻿<Window x:Class="charts_test.Windows.KoshiProblem"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:charts_test"
+        Background="#f0f0f0"
+        WindowStartupLocation="CenterScreen"
+        BorderThickness="1"
+        BorderBrush="#eeeeee"
+        xmlns:scot="clr-namespace:ScottPlot;assembly=ScottPlot.WPF"
+
+        Title="MainWindow" Height="450" Width="800">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Canvas Grid.Column="0" Background="#FFF0F1FF">
+            <Label Content="Red" Canvas.Left="10" Canvas.Top="10" Foreground="Red"/>
+            <Label Content="Blue" Canvas.Left="10" Canvas.Top="62" Foreground="#FF1700FF"/>
+            <Label Content="Runge–Kutta x2" Canvas.Left="58" Canvas.Top="10"/>
+            <Label Content="Euler" Canvas.Left="58" Canvas.Top="62"/>
+            <Label x:Name="dt_value" Content="0" Canvas.Left="237" Canvas.Top="99"/>
+            <Slider x:Name="dt_slider" Canvas.Left="10" Canvas.Top="107" Width="206" Minimum="0.001" Maximum="0.2"/>
+            <Label Content="dt: " Canvas.Left="216" Canvas.Top="99"/>
+            <Label Content="Green" Canvas.Left="10" Canvas.Top="36" Foreground="Green"/>
+            <Label Content="Runge–Kutta x4" Canvas.Left="58" Canvas.Top="36"/>
+            <CheckBox x:Name="draw_runge_x2" Content="draw" Canvas.Left="182" Canvas.Top="16" IsChecked="True"/>
+            <CheckBox x:Name="draw_runge_x4" Content="draw" Canvas.Left="182" Canvas.Top="42" IsChecked="True"/>
+            <CheckBox x:Name="draw_euler" Content="draw" Canvas.Left="182" Canvas.Top="68" IsChecked="True"/>
+
+        </Canvas>
+        <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
+                      HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Black" />
+        <DockPanel  Grid.Column="2" Background="GhostWhite">
+
+            <TabControl >
+                <TabItem Header="solution">
+                    <scot:WpfPlot Name="WpfPlot1"></scot:WpfPlot>
+                </TabItem>
+                <TabItem Header="error">
+                    <scot:WpfPlot Name="WpfPlot2"></scot:WpfPlot>
+                </TabItem>
+
+            </TabControl>
+
+        </DockPanel>
+
+
+    </Grid>
+</Window>
