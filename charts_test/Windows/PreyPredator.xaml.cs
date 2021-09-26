@@ -88,7 +88,7 @@ namespace charts_test.Windows
 
             return simPoints;
         }
-        private RungeKuttaSecondOrder solver;
+        private DifferentialEquationSolver solver;
         private Vector start;
 
         private double dt = 0.001;
@@ -96,10 +96,7 @@ namespace charts_test.Windows
         public PreyPredator()
         {
             InitializeComponent();
-            solver = new RungeKuttaSecondOrder()
-            {
-                dt = 0.1
-            };
+            solver = new RungeKuttaSecondOrder();
 
             start = new Vector(20, 20);
 
@@ -155,6 +152,20 @@ namespace charts_test.Windows
             PlotTools.clear(WpfPlot1);
             var res = runSimulation(solver, start.X, start.Y, dt, steps);
             PlotTools.plotFunction(res, Color.Green, 2, WpfPlot1);
+
+            PlotTools.clear(WpfPlot2);
+            List<Vector> x = new List<Vector>();
+            List<Vector> y = new List<Vector>();
+
+            for (int i = 0; i < res.Count; i++)
+            {
+                x.Add(new Vector(dt*i, res[i].X));
+                y.Add(new Vector(dt*i, res[i].Y));
+            }
+            PlotTools.plotFunction(x, Color.Red, 2, WpfPlot2);
+            PlotTools.plotFunction(y, Color.Blue, 2, WpfPlot2);
+            WpfPlot2.Plot.Render();
+
         }
     }
 }
