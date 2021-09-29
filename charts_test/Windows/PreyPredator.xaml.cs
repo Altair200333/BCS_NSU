@@ -22,81 +22,68 @@ namespace charts_test.Windows
     {
         class PreyPredatorEquation : DifferentialEquation
         {
-            public double startX;
-            public double startY;
-
             public double a = 10;
             public double b = 2;
             public double c = 2;
             public double d = 10;
-        }
 
-        class PreyPredatorX : PreyPredatorEquation
-        {
-            public double yPos;
-
-            public PreyPredatorX(double startX, double startY, double yPos)
+            public double xRight(double x, double y)
             {
-                this.startX = startX;
-                this.startY = startY;
-                this.yPos = yPos;
-                right = (t, x) => { return a * x - b * x * this.yPos; };
+                return a * x - b * x * y;
             }
-        }
-        class PreyPredatorY : PreyPredatorEquation
-        {
-            public double xPos;
 
-            public PreyPredatorY(double startX, double startY, double xPos)
+            public double yRight(double x, double y)
             {
-                this.startX = startX;
-                this.startY = startY;
-                this.xPos = xPos;
-                right = (t, y) => { return c * this.xPos * y - d * y; };
+                return c * x * y - d * y;
+            }
+
+            public Vector f(Vector pos, double t)
+            {
+                return new Vector(xRight(pos.X, pos.Y), yRight(pos.X, pos.Y));
             }
         }
 
-        List<Vector> runSimulation(DifferentialEquationSolver solver, double startX, double startY, double dt, int count)
+        Vector step(Vector input, Func<Vector, double, Vector> f, double t, double dt)
+        {
+            Vector k1 = input + dt * 0.5 * f(input, t);
+            return input + dt * f(k1, t + dt * 0.5);
+        }
+
+        List<Vector> runSimulation(DifferentialEquationSolver solver, double startX, double startY, double dt,
+            int count)
         {
             solver.dt = dt;
-            PreyPredatorX simX = new PreyPredatorX(startX, startY, startY);
-            PreyPredatorY simY = new PreyPredatorY(startX, startY, startX);
+            PreyPredatorEquation sim = new PreyPredatorEquation();
 
             List<Vector> simPoints = new List<Vector>();
-            double curX = startX;
-            double curY = startY;
+            Vector curPos = new Vector(startX, startY);
 
             double t = 0;
+            simPoints.Add(curPos);
             for (int i = 0; i < count; i++)
             {
-                if(curX < 0 || curY < 0 || curX > 100 || curY > 100)
+                if (curPos.X < 0 || curPos.Y < 0 || curPos.X > 1000 || curPos.Y > 1000)
                     break;
 
-                simPoints.Add(new Vector(curX, curY));
-
-                simX.yPos = curY;
-                simY.xPos = curX;
-
-                solver.equation = simX;
-                curX = solver.next(t, curX);
-
-                solver.equation = simY;
-                curY = solver.next(t, curY);
+                simPoints.Add(curPos);
+                curPos = step(curPos, sim.f, t, dt);
 
                 t += dt;
             }
 
             return simPoints;
         }
+
         private DifferentialEquationSolver solver;
         private Vector start;
 
         private double dt = 0.001;
         private int steps = 1000;
+
         public PreyPredator()
         {
             InitializeComponent();
-            solver = new RungeKuttaSecondOrder();
+            solver = new ImplicitRungeKuttaSecondOrder();
 
             start = new Vector(20, 20);
 
@@ -112,7 +99,6 @@ namespace charts_test.Windows
             steps = (int) steps_slider.Value;
 
             setDtValue(0.0001);
-
         }
 
         private void setYValue(double value)
@@ -133,7 +119,7 @@ namespace charts_test.Windows
 
         private void setStepsValue(double value)
         {
-            steps = (int)value;
+            steps = (int) value;
             steps_slider.Value = value;
             steps_value.Content = value.ToString();
             plotSimulation(start, dt, steps);
@@ -159,13 +145,13 @@ namespace charts_test.Windows
 
             for (int i = 0; i < res.Count; i++)
             {
-                x.Add(new Vector(dt*i, res[i].X));
-                y.Add(new Vector(dt*i, res[i].Y));
+                x.Add(new Vector(dt * i, res[i].X));
+                y.Add(new Vector(dt * i, res[i].Y));
             }
+
             PlotTools.plotFunction(x, Color.Red, 2, WpfPlot2);
             PlotTools.plotFunction(y, Color.Blue, 2, WpfPlot2);
             WpfPlot2.Plot.Render();
-
         }
     }
 }

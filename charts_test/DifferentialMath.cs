@@ -34,7 +34,7 @@ namespace charts_test
             double x = equation.x0;
             double t = equation.t0;
 
-            int steps = (int)Math.Round((end - t) / dt) + 1;
+            int steps = (int) Math.Round((end - t) / dt) + 1;
             for (int i = 0; i < steps; i++)
             {
                 if (t > end + 0.001)
@@ -72,6 +72,23 @@ namespace charts_test
         }
     }
 
+    class ImplicitRungeKuttaSecondOrder : DifferentialEquationSolver
+    {
+        public ImplicitRungeKuttaSecondOrder()
+        {
+            Xn = (x, t, dt, f) =>
+            {
+                double prediction = x + dt * f.right(t, x);
+                double k1 = dt * f.right(t, x);
+                double k2 = dt * f.right(t + dt * 0.5, x + k1 * 0.5);
+                double k3 = dt * f.right(t + dt * 0.5, x + k2 * 0.5);
+                double k4 = dt * f.right(t + dt * 0.5, x + k3);
+                double delta = 1.0 / 6.0 * (k1 + 2.0 * k2 + 2.0 * k3 + k4);
+                return prediction + delta;
+            };
+        }
+    }
+
     class RungeKuttaFourthOrder : DifferentialEquationSolver
     {
         public RungeKuttaFourthOrder()
@@ -87,6 +104,7 @@ namespace charts_test
             };
         }
     }
+
     class KoshiEquation : DifferentialEquation
     {
         public KoshiEquation()
