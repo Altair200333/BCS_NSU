@@ -43,16 +43,35 @@ namespace charts_test.Windows
             }
         }
 
-        Vector step(Vector input, Func<Vector, double, Vector> f, double t, double dt)
+        abstract class Solver2D
         {
-            Vector k1 = input + dt * 0.5 * f(input, t);
-            return input + dt * f(k1, t + dt * 0.5);
+            public abstract Vector step(Vector input, Func<Vector, double, Vector> f, double t, double dt);
         }
 
-        List<Vector> runSimulation(DifferentialEquationSolver solver, double startX, double startY, double dt,
+        class RungeKuttaSecondOrder2D : Solver2D
+        {
+            public override Vector step(Vector input, Func<Vector, double, Vector> f, double t, double dt)
+            {
+                Vector k1 = input + dt * 0.5 * f(input, t);
+                return input + dt * f(k1, t + dt * 0.5);
+            }
+        }
+
+        class RungeKuttaFourthOrder2D : Solver2D
+        {
+            public override Vector step(Vector input, Func<Vector, double, Vector> f, double t, double dt)
+            {
+                Vector k1 = dt * f(input, t);
+                Vector k2 = dt * f(input + k1 * 0.5, t + dt * 0.5);
+                Vector k3 = dt * f(input + k2 * 0.5, t + dt * 0.5);
+                Vector k4 = dt * f(input + k3, t + dt);
+                return input + (k1 + 2*k2 + 2*k3 + k4)/6.0;
+            }
+        }
+
+        List<Vector> runSimulation(Solver2D solver, double startX, double startY, double dt,
             int count)
         {
-            solver.dt = dt;
             PreyPredatorEquation sim = new PreyPredatorEquation();
 
             List<Vector> simPoints = new List<Vector>();
@@ -66,7 +85,7 @@ namespace charts_test.Windows
                     break;
 
                 simPoints.Add(curPos);
-                curPos = step(curPos, sim.f, t, dt);
+                curPos = solver.step(curPos, sim.f, t, dt);
 
                 t += dt;
             }
@@ -74,7 +93,7 @@ namespace charts_test.Windows
             return simPoints;
         }
 
-        private DifferentialEquationSolver solver;
+        private Solver2D solver;
         private Vector start;
 
         private double dt = 0.001;
@@ -83,7 +102,7 @@ namespace charts_test.Windows
         public PreyPredator()
         {
             InitializeComponent();
-            solver = new ImplicitRungeKuttaSecondOrder();
+            solver = new RungeKuttaSecondOrder2D();
 
             start = new Vector(20, 20);
 
@@ -95,6 +114,12 @@ namespace charts_test.Windows
 
             start.X = x_slider.Value;
             start.Y = y_slider.Value;
+
+            x_value.Content = x_slider.Value.ToString();
+            y_value.Content = y_slider.Value.ToString();
+
+            dt_value.Content = dt_slider.Value.ToString();
+            steps_value.Content = steps.ToString();
 
             steps = (int) steps_slider.Value;
 
