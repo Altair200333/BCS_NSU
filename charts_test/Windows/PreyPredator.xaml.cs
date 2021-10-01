@@ -65,15 +65,13 @@ namespace charts_test.Windows
                 Vector k2 = dt * f(input + k1 * 0.5, t + dt * 0.5);
                 Vector k3 = dt * f(input + k2 * 0.5, t + dt * 0.5);
                 Vector k4 = dt * f(input + k3, t + dt);
-                return input + (k1 + 2*k2 + 2*k3 + k4)/6.0;
+                return input + (k1 + 2 * k2 + 2 * k3 + k4) / 6.0;
             }
         }
 
         List<Vector> runSimulation(Solver2D solver, double startX, double startY, double dt,
             int count)
         {
-            PreyPredatorEquation sim = new PreyPredatorEquation();
-
             List<Vector> simPoints = new List<Vector>();
             Vector curPos = new Vector(startX, startY);
 
@@ -98,7 +96,27 @@ namespace charts_test.Windows
 
         private double dt = 0.001;
         private int steps = 1000;
+        PreyPredatorEquation sim = new PreyPredatorEquation();
 
+        List<Vector> findEqulibriums()
+        {
+            List<Vector> steadyPoints = new List<Vector>();
+            steadyPoints.Add(new Vector(0,0));
+            steadyPoints.Add(new Vector(sim.a / sim.b, sim.d / sim.c));
+            
+            return steadyPoints;
+        }
+
+        void showListEqulibriums()
+        {
+            var steady = findEqulibriums();
+            equlibriums.Items.Clear();
+
+            foreach (var equlibrium in steady)
+            {
+                equlibriums.Items.Add("(" + equlibrium.X + ", " + equlibrium.Y + ")");
+            }
+        }
         public PreyPredator()
         {
             InitializeComponent();
@@ -124,6 +142,39 @@ namespace charts_test.Windows
             steps = (int) steps_slider.Value;
 
             setDtValue(0.0001);
+
+            showListEqulibriums();
+        }
+
+        void setJacobian()
+        {
+            double a = sim.a - sim.b * start.Y;
+            double b = -sim.b * start.X;
+            double c = sim.c * start.X - sim.d;
+            double d = sim.c * start.Y;
+
+            jacob0_0.Content = a;
+            jacob1_0.Content = d;
+
+            jacob0_1.Content = b;
+            jacob1_1.Content = c;
+
+            double det = Math.Pow(a + d, 2) - 4*(a*d - b*c);
+            bool imaginary = det < 0;
+            string l1, l2;
+            if (!imaginary)
+            {
+                l1 = (((a + d) - Math.Sqrt(det)) / (2.0)).ToString();
+                l2 = (((a + d) + Math.Sqrt(det)) / (2.0)).ToString();
+            }
+            else
+            {
+                l1 = ((a + d) / 2.0).ToString() + " - i" + (Math.Sqrt(-det) / 2).ToString();
+                l2 = ((a + d) / 2.0).ToString() + " + i" + (Math.Sqrt(-det) / 2).ToString();
+            }
+
+            eig1.Content = l1;
+            eig2.Content = l2;
         }
 
         private void setYValue(double value)
@@ -177,6 +228,8 @@ namespace charts_test.Windows
             PlotTools.plotFunction(x, Color.Red, 2, WpfPlot2);
             PlotTools.plotFunction(y, Color.Blue, 2, WpfPlot2);
             WpfPlot2.Plot.Render();
+
+            setJacobian();
         }
     }
 }

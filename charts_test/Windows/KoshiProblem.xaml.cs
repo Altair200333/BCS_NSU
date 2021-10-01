@@ -95,7 +95,7 @@ namespace charts_test.Windows
 
         private void plotSolution(DifferentialEquationSolver solver, Color color)
         {
-            var points = solver.solve(3.0);
+            var points = solver.solve(6.0);
             PlotTools.plotFunction(points, color, pointSize, WpfPlot1);
 
             List<Vector> differences = new List<Vector>();
