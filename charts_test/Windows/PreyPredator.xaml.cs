@@ -101,9 +101,9 @@ namespace charts_test.Windows
         List<Vector> findEqulibriums()
         {
             List<Vector> steadyPoints = new List<Vector>();
-            steadyPoints.Add(new Vector(0,0));
+            steadyPoints.Add(new Vector(0, 0));
             steadyPoints.Add(new Vector(sim.a / sim.b, sim.d / sim.c));
-            
+
             return steadyPoints;
         }
 
@@ -117,6 +117,7 @@ namespace charts_test.Windows
                 equlibriums.Items.Add("(" + equlibrium.X + ", " + equlibrium.Y + ")");
             }
         }
+
         public PreyPredator()
         {
             InitializeComponent();
@@ -148,33 +149,44 @@ namespace charts_test.Windows
 
         void setJacobian()
         {
+            //a b
+            //d c
             double a = sim.a - sim.b * start.Y;
             double b = -sim.b * start.X;
             double c = sim.c * start.X - sim.d;
             double d = sim.c * start.Y;
 
-            jacob0_0.Content = a;
-            jacob1_0.Content = d;
 
-            jacob0_1.Content = b;
-            jacob1_1.Content = c;
+            jacob0_0.Content = a; //top left
+            jacob1_0.Content = d; //bot left
 
-            double det = Math.Pow(a + d, 2) - 4*(a*d - b*c);
+            jacob0_1.Content = b; //top right
+            jacob1_1.Content = c; //bot right
+
+            double trace = a + c;
+
+            double det = Math.Pow(trace, 2) - 4.0 * (a * c - b * d);
             bool imaginary = det < 0;
             string l1, l2;
             if (!imaginary)
             {
-                l1 = (((a + d) - Math.Sqrt(det)) / (2.0)).ToString();
-                l2 = (((a + d) + Math.Sqrt(det)) / (2.0)).ToString();
+                l1 = ((trace + Math.Sqrt(det)) / 2.0).ToString();
+                l2 = ((trace - Math.Sqrt(det)) / 2.0).ToString();
             }
             else
             {
-                l1 = ((a + d) / 2.0).ToString() + " - i" + (Math.Sqrt(-det) / 2).ToString();
-                l2 = ((a + d) / 2.0).ToString() + " + i" + (Math.Sqrt(-det) / 2).ToString();
+                l1 = (trace / 2.0).ToString() + " - i" + (Math.Sqrt(-det) / 2).ToString();
+                l2 = (trace / 2.0).ToString() + " + i" + (Math.Sqrt(-det) / 2).ToString();
             }
 
             eig1.Content = l1;
             eig2.Content = l2;
+
+            var steady = findEqulibriums();
+            foreach (var vector in steady)
+            {
+                WpfPlot1.Plot.AddPoint(vector.X, vector.Y, Color.Chocolate, 5);
+            }
         }
 
         private void setYValue(double value)
@@ -212,6 +224,9 @@ namespace charts_test.Windows
         private void plotSimulation(Vector start, double dt, int steps)
         {
             PlotTools.clear(WpfPlot1);
+
+            setJacobian();
+
             var res = runSimulation(solver, start.X, start.Y, dt, steps);
             PlotTools.plotFunction(res, Color.Green, 2, WpfPlot1);
 
@@ -228,8 +243,6 @@ namespace charts_test.Windows
             PlotTools.plotFunction(x, Color.Red, 2, WpfPlot2);
             PlotTools.plotFunction(y, Color.Blue, 2, WpfPlot2);
             WpfPlot2.Plot.Render();
-
-            setJacobian();
         }
     }
 }
