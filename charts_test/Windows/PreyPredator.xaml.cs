@@ -15,6 +15,39 @@ using Color = System.Drawing.Color;
 
 namespace charts_test.Windows
 {
+
+    abstract class Solver2D
+    {
+        public abstract Vector step(Vector input, Func<Vector, double, Vector> f, double t, double dt);
+    }
+    class EulerSolver2D : Solver2D
+    {
+        public override Vector step(Vector input, Func<Vector, double, Vector> f, double t, double dt)
+        {
+            return input + dt * f(input, t);
+        }
+        //Xn = (x, t, dt, f) => { return x + dt * f.right(t, x); };
+    }
+    class RungeKuttaSecondOrder2D : Solver2D
+    {
+        public override Vector step(Vector input, Func<Vector, double, Vector> f, double t, double dt)
+        {
+            Vector k1 = input + dt * 0.5 * f(input, t);
+            return input + dt * f(k1, t + dt * 0.5);
+        }
+    }
+
+    class RungeKuttaFourthOrder2D : Solver2D
+    {
+        public override Vector step(Vector input, Func<Vector, double, Vector> f, double t, double dt)
+        {
+            Vector k1 = dt * f(input, t);
+            Vector k2 = dt * f(input + k1 * 0.5, t + dt * 0.5);
+            Vector k3 = dt * f(input + k2 * 0.5, t + dt * 0.5);
+            Vector k4 = dt * f(input + k3, t + dt);
+            return input + (k1 + 2 * k2 + 2 * k3 + k4) / 6.0;
+        }
+    }
     /// <summary>
     /// Interaction logic for PreyPredator.xaml
     /// </summary>
@@ -43,31 +76,7 @@ namespace charts_test.Windows
             }
         }
 
-        abstract class Solver2D
-        {
-            public abstract Vector step(Vector input, Func<Vector, double, Vector> f, double t, double dt);
-        }
 
-        class RungeKuttaSecondOrder2D : Solver2D
-        {
-            public override Vector step(Vector input, Func<Vector, double, Vector> f, double t, double dt)
-            {
-                Vector k1 = input + dt * 0.5 * f(input, t);
-                return input + dt * f(k1, t + dt * 0.5);
-            }
-        }
-
-        class RungeKuttaFourthOrder2D : Solver2D
-        {
-            public override Vector step(Vector input, Func<Vector, double, Vector> f, double t, double dt)
-            {
-                Vector k1 = dt * f(input, t);
-                Vector k2 = dt * f(input + k1 * 0.5, t + dt * 0.5);
-                Vector k3 = dt * f(input + k2 * 0.5, t + dt * 0.5);
-                Vector k4 = dt * f(input + k3, t + dt);
-                return input + (k1 + 2 * k2 + 2 * k3 + k4) / 6.0;
-            }
-        }
 
         List<Vector> runSimulation(Solver2D solver, double startX, double startY, double dt,
             int count)

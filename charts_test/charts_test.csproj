@@ -141,6 +141,9 @@
     <Compile Include="Windows\scot_test.xaml.cs">
       <DependentUpon>scot_test.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\Task8System.xaml.cs">
+      <DependentUpon>Task8System.xaml</DependentUpon>
+    </Compile>
     <Page Include="Windows\Bessel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -186,6 +189,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\scot_test.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Task8System.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
