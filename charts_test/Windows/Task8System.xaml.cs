@@ -42,6 +42,11 @@ namespace charts_test.Windows
         {
             public override Vector step(Vector input, Func<Vector, double, Vector> f, double t, double dt)
             {
+                //double u = input.X;
+                //double v = input.Y;
+                //return new Vector(
+                //    (u + 1998 * dt* v / (1 + 1999 * dt)) / (1 - 998 * dt + 999 * 1998 * dt * dt / (1 + 1999 * dt)),
+                //    (v - 999 * dt * u) / (1 + 1999 * dt));
                 return new Vector((1998 * input.Y * dt + input.X) / (1 - dt * 998),
                     (-999*dt*input.X+input.Y)/(1 + dt*1999));
             }
