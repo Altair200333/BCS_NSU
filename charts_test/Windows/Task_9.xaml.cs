@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ScottPlot;
 using Color = System.Drawing.Color;
 
 namespace charts_test.Windows
@@ -22,7 +23,7 @@ namespace charts_test.Windows
         public Func<double, double> qx = x => 0.0;
         public Func<double, double> rx = x => 0;
 
-
+        public Func<double, double> exact;
         //ct1 * y(a) + ct2 * y'(a) = ct
         //dt1 * y(b) + dt2 * y'(b) = dt
         public double a;
@@ -109,15 +110,22 @@ namespace charts_test.Windows
     {
         RunnerSolver s = new RunnerSolver();
 
-        private SecondOrderEquation equation = new SecondOrderEquation()
+        class BorderEquation: SecondOrderEquation
         {
-            rx = x => Math.Sin(x),
-            a = 0,
-            b = Math.PI,
+            public BorderEquation()
+            {
+                rx = x => Math.Sin(x);
+                a = 0;
+                b = Math.PI;
 
-            ct1 = 1,
-            dt1 = 1,
-        };
+                ct1 = 1;
+                dt1 = 1;
+
+                exact = x => ct + (dt - ct)/Math.PI*x - Math.Sin(x);
+            }
+        }
+
+        private SecondOrderEquation equation = new BorderEquation();
         public Task_9()
         {
             InitializeComponent();
@@ -138,6 +146,9 @@ namespace charts_test.Windows
                 s.n = (int) n_value.Value;
                 resolveAndPlot();
             };
+            show_exact_solution.Checked += delegate(object sender, RoutedEventArgs args) { resolveAndPlot(); };
+            show_exact_solution.Unchecked += delegate(object sender, RoutedEventArgs args) { resolveAndPlot(); };
+
             n_value.Value = s.n;
             resolveAndPlot();
         }
@@ -146,7 +157,22 @@ namespace charts_test.Windows
         {
             var res = s.solve(equation);
             PlotTools.clear(WpfPlot1);
-            PlotTools.plotFunction(res, Color.Red, 2, WpfPlot1);
+            PlotTools.plotFunction(res, Color.Red, 2, WpfPlot1, false);
+            if(show_exact_solution.IsChecked != null && show_exact_solution.IsChecked.Value)
+            {
+                PlotTools.plotFunction(equation.exact, equation.a, equation.b, 200, WpfPlot1);
+            }   
+            PlotTools.render(WpfPlot1);
+
+            List<Vector> differences = new List<Vector>();
+            for (int i = 0; i < res.Count; i++)
+            {
+                differences.Add(new Vector(res[i].X, Math.Abs(res[i].Y - equation.exact(res[i].X))));
+            }
+
+            PlotTools.clear(WpfPlot2);
+            PlotTools.plotFunction(differences, Color.Blue, 2, WpfPlot2, true);
+
         }
     }
 }

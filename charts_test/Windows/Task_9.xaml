@@ -17,18 +17,29 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Canvas Grid.Column="0" Background="#FFF0F1FF">
-            <Slider x:Name="y_a_value" Canvas.Left="10" Canvas.Top="10" Width="223" Minimum="-1" Maximum="1"/>
-            <Slider x:Name="y_b_value" Canvas.Left="10" Canvas.Top="33" Width="223" Minimum="-1" Maximum="1"/>
-            <Label Content="{Binding ElementName=y_a_value, Path=Value, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="238" Canvas.Top="2"/>
-            <Label Content="{Binding Value, ElementName=y_b_value, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="238" Canvas.Top="28"/>
+            <Slider x:Name="y_a_value" Canvas.Left="40" Canvas.Top="12" Width="223" Minimum="-1" Maximum="1"/>
+            <Slider x:Name="y_b_value" Canvas.Left="40" Canvas.Top="32" Width="223" Minimum="-1" Maximum="1"/>
+            <Label Content="{Binding ElementName=y_a_value, Path=Value, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="268" Canvas.Top="4" Foreground="#FF0076EC"/>
+            <Label Content="{Binding Value, ElementName=y_b_value, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="268" Canvas.Top="27" Foreground="#FF0076EC"/>
             <Slider x:Name="n_value" Canvas.Left="10" Canvas.Top="82" Width="223" Minimum="4" Maximum="1000"  IsSnapToTickEnabled="True" Value="30"/>
             <Label Content="{Binding Value, ElementName=n_value, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="238" Canvas.Top="74"/>
+            <Label Content="y(0)" Canvas.Left="10" Canvas.Top="4" Foreground="#FFC500FF"/>
+            <Label Content="y(π)" Canvas.Left="10" Canvas.Top="27" Foreground="#FFC500FF"/>
+            <Label Content="n" Canvas.Left="267" Canvas.Top="74" Foreground="#FFC500FF"/>
+            <CheckBox x:Name="show_exact_solution" Content="show exact solution" Canvas.Left="10" Canvas.Top="149"/>
 
         </Canvas>
         <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
                       HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Black" />
         <DockPanel  Grid.Column="2" Background="GhostWhite">
-            <scot:WpfPlot Name="WpfPlot1"></scot:WpfPlot>
+            <TabControl>
+                <TabItem Header="solution">
+                    <scot:WpfPlot Name="WpfPlot1" />
+                </TabItem>
+                <TabItem Header="difference">
+                    <scot:WpfPlot Name="WpfPlot2" />
+                </TabItem>
+            </TabControl>
         </DockPanel>
 
     </Grid>

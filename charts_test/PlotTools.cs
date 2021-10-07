@@ -11,7 +11,7 @@ namespace charts_test
 {
     static class PlotTools
     {
-        public static void plotFunction(Func<double, double> func, double from, double to, int segments, WpfPlot target)
+        public static void plotFunction(Func<double, double> func, double from, double to, int segments, WpfPlot target, float size = 2)
         {
             List<double> y = new List<double>();
             List<double> x = new List<double>();
@@ -24,7 +24,7 @@ namespace charts_test
                 x.Add(position);
             }
 
-            target.Plot.AddScatter(x.ToArray(), y.ToArray());
+            target.Plot.AddScatter(x.ToArray(), y.ToArray(), markerSize: size);
             target.Render();
         }
         public static void plotFunction(List<Vector> data, Color color, float size, WpfPlot target, bool render = true)
