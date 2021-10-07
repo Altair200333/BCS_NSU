@@ -94,6 +94,7 @@ namespace charts_test.Windows
 
             methods.Items.Add("Explicit");
             methods.Items.Add("Implicit");
+            methods.Items.Add("Both");
             methods.SelectedIndex = 0;
 
             methods.SelectionChanged += MethodsOnSelectionChanged;
@@ -125,12 +126,26 @@ namespace charts_test.Windows
 
         private void runSimulation()
         {
-            Solver2D solver = currentMethod == 0 ? explicitSolver : implicitSolver;
+            if (currentMethod == 2)
+            {
+                PlotTools.clear(WpfPlot1);
+                var explicitRes = runSimulation(explicitSolver, start.X, start.Y, dt, endTime, equation);
+                var implicitRes = runSimulation(implicitSolver, start.X, start.Y, dt, endTime, equation);
+                PlotTools.plotFunction(explicitRes, Color.OrangeRed, 2, WpfPlot1, false);
+                PlotTools.plotPoints(implicitRes, Color.Green, 3, WpfPlot1, false);
+                PlotTools.render(WpfPlot1);
 
-            PlotTools.clear(WpfPlot1);
+            }
+            else
+            {
+                Solver2D solver = currentMethod == 0 ? explicitSolver : implicitSolver;
 
-            var res = runSimulation(solver, start.X, start.Y, dt, endTime, equation);
-            PlotTools.plotFunction(res, Color.OrangeRed, 2, WpfPlot1);
+                PlotTools.clear(WpfPlot1);
+
+                var res = runSimulation(solver, start.X, start.Y, dt, endTime, equation);
+                PlotTools.plotFunction(res, Color.OrangeRed, 2, WpfPlot1);
+            }
+            
         }
 
         private void End_t_sliderOnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

@@ -27,7 +27,7 @@ namespace charts_test
             target.Plot.AddScatter(x.ToArray(), y.ToArray());
             target.Render();
         }
-        public static void plotFunction(List<Vector> data, Color color, float size, WpfPlot target)
+        public static void plotFunction(List<Vector> data, Color color, float size, WpfPlot target, bool render = true)
         {
             if (data.Count < 2)
                 return;
@@ -36,9 +36,13 @@ namespace charts_test
                 data.Select(x => (double)x.Y).ToArray(),
                 color, markerSize: size);
 
-            target.Render();
+            if(render)
+            {
+                target.Render();
+            }
+
         }
-        public static void plotPoints(List<Vector> data, Color color, float size, WpfPlot target)
+        public static void plotPoints(List<Vector> data, Color color, float size, WpfPlot target, bool render = true)
         {
             if (data.Count < 2)
                 return;
@@ -47,12 +51,19 @@ namespace charts_test
                 data.Select(x => (double) x.Y).ToArray(),
                 color, size);
 
-            target.Render();
+            if (render)
+            {
+                target.Render();
+            }
         }
         
         public static void clear(WpfPlot target)
         {
             target.Plot.Clear();
+        }
+        public static void render(WpfPlot target)
+        {
+            target.Render();
         }
     }
 }
