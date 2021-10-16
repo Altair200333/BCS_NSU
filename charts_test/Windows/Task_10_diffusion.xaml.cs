@@ -98,8 +98,99 @@ namespace charts_test.Windows
             equation.createHeatMap();
             equation.setBoundaryConditions();
 
+            solveCrankNicolson(equation);
+            
             createBitmap(equation.getScaleHeatMap());
             redrawImage();
+        }
+        void solveCrankNicolson(DiffusionEquation equation)
+        {
+            double h = equation.L / (equation.Nx - 1);
+            double dt = equation.T / (equation.Nt - 1);
+
+            double a = dt * equation.D / (h * h);
+            double[,] A = new double[equation.Nx, this.equation.Nx];
+
+            fillAMatrix(equation, a, A);
+
+            double[,] eliminated = new double[equation.Nx, this.equation.Nx];
+            Buffer.BlockCopy(A, 0, eliminated, 0, A.Length * sizeof(double));
+
+            List<double> ratios = new List<double>();
+            for (int i = 0; i < equation.Nx - 2; i++)
+            {
+                double ratio = eliminated[i + 1, i] / eliminated[i, i];
+                ratios.Add(ratio);
+                for (int j = 0; j < equation.Nx; j++)
+                {
+                    eliminated[i + 1, j] = eliminated[i + 1, j] - eliminated[i, j] * ratio;
+                }
+            }
+
+            double[] rightSide = new double[equation.Nx];
+            double[] elimination = new double[equation.Nx];
+
+            for (int i = 0; i < equation.Nt - 1; i++)
+            {
+                fillRightSide(equation, a, rightSide, i);
+                for (int j = 0; j < equation.Nx - 2; j++)
+                {
+                    rightSide[j + 1] = rightSide[j + 1] - rightSide[j] * ratios[j];
+                }
+
+                var next = gaussElimination(equation.Nx, eliminated, rightSide);
+                for (int j = 0; j < equation.Nx; j++)
+                {
+                    equation.heatMap[i + 1, j] = next[j];
+                }
+            }
+            fillRightSide(equation, a, rightSide, 0);
+            double d = 0;
+        }
+
+        double[] gaussElimination(int Nx, double[,] eliminated, double[] rightSide)
+        {
+            double[] nextVector = new double[Nx];
+            for (int i = 0; i < Nx; i++)
+            {
+                int id = Nx - 1 - i;
+                double dot = 0;
+                for (int j = 0; j < Nx; j++)
+                {
+                    dot += nextVector[j] * eliminated[id, j];
+                }
+                nextVector[id] = rightSide[id] - dot;
+                nextVector[id] /= eliminated[id, id];
+            }
+
+            return nextVector;
+        }
+        void fillRightSide(DiffusionEquation equation, double a, double[] rightSide, int t)
+        {
+            rightSide[0] = 0;
+            for (int i = 0; i < equation.Nx - 2; i++)
+            {
+                rightSide[i + 1] = a * equation.heatMap[t, i] + 2 * (1 - a) * equation.heatMap[t, i + 1] + a * equation.heatMap[t, i + 2];
+            }
+            rightSide[equation.Nx - 1] = 0;
+        }
+        private void fillAMatrix(DiffusionEquation equation, double a, double[,] A)
+        {
+            double mElement = 2 * (1 + a);
+            double sElement = -a;
+            for (int i = 0; i < equation.Nx; i++)
+            {
+                A[i, i] = mElement;
+            }
+
+            for (int i = 1; i < equation.Nx - 1; i++)
+            {
+                A[i, i - 1] = sElement;
+                A[i, i + 1] = sElement;
+            }
+
+            A[0, 0] = 1.0;
+            A[equation.Nx - 1, this.equation.Nx - 1] = 1.0;
         }
 
         private void redrawImage()
@@ -134,6 +225,7 @@ namespace charts_test.Windows
             heatMap = new double[Nt, Nx];
         }
 
+      
         public double[,] getScaleHeatMap()
         {
             var scaled = new double[Nt, Nx];
@@ -150,6 +242,7 @@ namespace charts_test.Windows
             }
             return scaled;
         }
+
         public void setBoundaryConditions()
         {
             for (int i = 0; i < Nt; i++)
