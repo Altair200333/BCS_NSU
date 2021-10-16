@@ -17,13 +17,19 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Canvas Grid.Column="0" Background="#FFF0F1FF">
-            
+            <Slider x:Name="nx_value" Minimum="4" Maximum="100"  IsSnapToTickEnabled="True" Value="10" Canvas.Left="10" Canvas.Top="10" Width="223"/>
+            <Label Content="{Binding Value, ElementName=nx_value, UpdateSourceTrigger=PropertyChanged}" Margin="238,2,127,389"/>
+            <Label Content="Nx" Foreground="#FFC500FF" Margin="272,2,92,389"/>
+            <Slider x:Name="nt_value" Minimum="4" Maximum="100"  IsSnapToTickEnabled="True" Value="10" Canvas.Left="10" Canvas.Top="50" Width="223"/>
+            <Label Content="{Binding Value, ElementName=nt_value, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="238" Canvas.Top="42"/>
+            <Label Content="Nt" Foreground="#FFC500FF" Canvas.Left="272" Canvas.Top="42"/>
+
         </Canvas>
         <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
                       HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Black" />
         <DockPanel  Grid.Column="2" Background="GhostWhite">
             <scot:WpfPlot Name="WpfPlot1"></scot:WpfPlot>
         </DockPanel>
-
+        
     </Grid>
 </Window>

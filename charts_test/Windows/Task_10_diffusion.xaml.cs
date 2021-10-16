@@ -89,20 +89,41 @@ namespace charts_test.Windows
         {
             InitializeComponent();
 
+            initialSetup();
+            nx_value.Value = equation.Nx;
+            nt_value.Value = equation.Nt;
+
+            nx_value.ValueChanged += (sender, args) => { equation.Nx = (int) nx_value.Value; resolve(); redraw();};
+            nt_value.ValueChanged += (sender, args) => { equation.Nt = (int)nt_value.Value; resolve(); redraw();};
+        }
+
+        private void initialSetup()
+        {
             equation.D = 1;
             equation.T = 1;
             equation.L = 1;
             equation.Nx = 10;
             equation.Nt = 10;
 
+            resolve();
+            redraw();
+
+        }
+
+        private void redraw()
+        {
+            createBitmap(equation.getScaleHeatMap());
+            redrawImage();
+        }
+
+        private void resolve()
+        {
             equation.createHeatMap();
             equation.setBoundaryConditions();
 
             solveCrankNicolson(equation);
-            
-            createBitmap(equation.getScaleHeatMap());
-            redrawImage();
         }
+
         void solveCrankNicolson(DiffusionEquation equation)
         {
             double h = equation.L / (equation.Nx - 1);
@@ -195,12 +216,15 @@ namespace charts_test.Windows
 
         private void redrawImage()
         {
+            WpfPlot1.Plot.Clear();
+
             var imagePlot = new PlotImg()
                 {Bitmap = img, X = -5, Y = -5, size = new Vector(10, 10), Alignment = Alignment.MiddleCenter};
             WpfPlot1.Plot.Add(imagePlot);
-            WpfPlot1.Render();
             WpfPlot1.Plot.SetAxisLimitsX(-10, 10);
-            WpfPlot1.Plot.SetAxisLimitsY(-10, 10);
+            WpfPlot1.Plot.SetAxisLimitsY(-10, 10); 
+            WpfPlot1.Render();
+
         }
 
         private void createBitmap(double[,] data)
