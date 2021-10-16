@@ -68,9 +68,11 @@ namespace charts_test.Windows
                 PointF end = new PointF(dims.GetPixelX(this.X), dims.GetPixelY(this.Y + size.Y));
                 using (Graphics graphics = GDI.Graphics(bmp, dims, lowQuality))
                 {
+                    graphics.PixelOffsetMode = PixelOffsetMode.Half;
+                    graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+
                     using (Pen pen = new Pen(Color.Black))
                     {
-                        graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
 
                         //graphics.DrawLine(pen, origin, end);
                         //graphics.DrawLine(pen, origin, right);
@@ -225,6 +227,20 @@ namespace charts_test.Windows
             WpfPlot1.Plot.SetAxisLimitsY(-10, 10); 
             WpfPlot1.Render();
 
+            WpfPlot2.Plot.Clear();
+            List<Vector> points = new List<Vector>();
+
+            double dt = equation.T / (equation.Nt - 1);
+            for (int i = 0; i < equation.Nt; i++)
+            {
+                double maxT = double.MinValue;
+                for (int j = 0; j < equation.Nx; j++)
+                {
+                    maxT = Math.Max(maxT, equation.heatMap[i, j]);
+                }    
+                points.Add(new Vector(dt*i, maxT));
+            }
+            PlotTools.plotFunction(points, Color.Black, 3, WpfPlot2, true);
         }
 
         private void createBitmap(double[,] data)
