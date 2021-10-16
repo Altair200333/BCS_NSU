@@ -19,10 +19,17 @@
         <Canvas Grid.Column="0" Background="#FFF0F1FF">
             <Slider x:Name="nx_value" Minimum="4" Maximum="100"  IsSnapToTickEnabled="True" Value="10" Canvas.Left="10" Canvas.Top="10" Width="223"/>
             <Label Content="{Binding Value, ElementName=nx_value, UpdateSourceTrigger=PropertyChanged}" Margin="238,2,127,389"/>
-            <Label Content="Nx" Foreground="#FFC500FF" Margin="272,2,92,389"/>
+            <Label Content="Nx" Foreground="#FFC500FF" Canvas.Left="290" Canvas.Top="2"/>
             <Slider x:Name="nt_value" Minimum="4" Maximum="100"  IsSnapToTickEnabled="True" Value="10" Canvas.Left="10" Canvas.Top="50" Width="223"/>
             <Label Content="{Binding Value, ElementName=nt_value, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="238" Canvas.Top="42"/>
-            <Label Content="Nt" Foreground="#FFC500FF" Canvas.Left="272" Canvas.Top="42"/>
+            <Label Content="Nt" Foreground="#FFC500FF" Canvas.Left="290" Canvas.Top="42"/>
+            <Slider x:Name="l_value" Minimum="0.01" Value="1" Canvas.Left="10" Canvas.Top="99" Width="223"/>
+            <Label Content="{Binding Value, ElementName=l_value, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="238" Canvas.Top="91"/>
+            <Label Content="L" Foreground="#FFC500FF" Canvas.Left="298" Canvas.Top="91"/>
+            <Slider x:Name="t_value" Minimum="0.01" Value="1" Canvas.Left="10" Canvas.Top="136" Width="223"/>
+            <Label Content="{Binding Value, ElementName=t_value, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="238" Canvas.Top="128"/>
+            <Label Content="T" Foreground="#FFC500FF" Canvas.Left="298" Canvas.Top="128"/>
+            <CheckBox x:Name="smooth_check" Content="smooth map" Canvas.Left="10" Canvas.Top="212" IsChecked="True"/>
 
         </Canvas>
         <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
@@ -37,6 +44,6 @@
                 </TabItem>
             </TabControl>
         </DockPanel>
-        
+
     </Grid>
 </Window>

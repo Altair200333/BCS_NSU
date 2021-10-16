@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,6 +36,7 @@ namespace charts_test.Windows
             public Bitmap Bitmap;
             public Alignment Alignment;
             public Vector size;
+            public bool smooth = true;
             public bool IsVisible { get; set; } = true;
 
             public int XAxisIndex { get; set; }
@@ -69,14 +71,23 @@ namespace charts_test.Windows
                 using (Graphics graphics = GDI.Graphics(bmp, dims, lowQuality))
                 {
                     graphics.PixelOffsetMode = PixelOffsetMode.Half;
-                    graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
-
+                    graphics.InterpolationMode = smooth ? InterpolationMode.HighQualityBicubic: InterpolationMode.NearestNeighbor;
+                    
                     using (Pen pen = new Pen(Color.Black))
                     {
 
                         //graphics.DrawLine(pen, origin, end);
                         //graphics.DrawLine(pen, origin, right);
-                        graphics.DrawImage(this.Bitmap, new PointF[] {origin, right, end});
+
+                        using (ImageAttributes wrapMode = new ImageAttributes())
+                        {
+                            wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                            //g.DrawImage(input, rect, 0, 0, input.Width, input.Height, GraphicsUnit.Pixel, wrapMode);
+                            graphics.DrawImage(this.Bitmap, new PointF[] { origin, right, end }, 
+                                new RectangleF(0,0, this.Bitmap.Width, this.Bitmap.Height), GraphicsUnit.Pixel, wrapMode);
+
+                        }
+                        //graphics.DrawImage(this.Bitmap, new PointF[] {origin, right, end});
                         graphics.ResetTransform();
                     }
                 }
@@ -85,7 +96,7 @@ namespace charts_test.Windows
 
         //i - y; j - x
         Bitmap img = DataGen.SampleImage();
-        
+        public bool useSmooth = true;
         private DiffusionEquation equation = new DiffusionEquation();
         public Task_10_diffusion()
         {
@@ -94,9 +105,23 @@ namespace charts_test.Windows
             initialSetup();
             nx_value.Value = equation.Nx;
             nt_value.Value = equation.Nt;
+            l_value.Value = equation.L;
+            t_value.Value = equation.T;
+
+            smooth_check.Checked += (sender, args) => { setSmooth(); };
+            smooth_check.Unchecked += (sender, args) => { setSmooth(); };
 
             nx_value.ValueChanged += (sender, args) => { equation.Nx = (int) nx_value.Value; resolve(); redraw();};
             nt_value.ValueChanged += (sender, args) => { equation.Nt = (int)nt_value.Value; resolve(); redraw();};
+
+            l_value.ValueChanged += (sender, args) => { equation.L = l_value.Value; resolve(); redraw();};
+            t_value.ValueChanged += (sender, args) => { equation.T = t_value.Value; resolve(); redraw();};
+        }
+
+        private void setSmooth()
+        {
+            if (smooth_check.IsChecked != null) useSmooth = smooth_check.IsChecked.Value;
+            redraw();
         }
 
         private void initialSetup()
@@ -221,10 +246,10 @@ namespace charts_test.Windows
             WpfPlot1.Plot.Clear();
 
             var imagePlot = new PlotImg()
-                {Bitmap = img, X = -5, Y = -5, size = new Vector(10, 10), Alignment = Alignment.MiddleCenter};
+                {Bitmap = img, smooth = useSmooth, X = -5, Y = -5, size = new Vector(10, 10), Alignment = Alignment.MiddleCenter};
             WpfPlot1.Plot.Add(imagePlot);
-            WpfPlot1.Plot.SetAxisLimitsX(-10, 10);
-            WpfPlot1.Plot.SetAxisLimitsY(-10, 10); 
+            WpfPlot1.Plot.SetAxisLimitsX(-5.5, 5.5);
+            WpfPlot1.Plot.SetAxisLimitsY(-5.5, 5.5); 
             WpfPlot1.Render();
 
             WpfPlot2.Plot.Clear();
@@ -293,7 +318,7 @@ namespace charts_test.Windows
 
             for (int i = 0; i < Nx; i++)
             {
-                double x = (double) i / (Nx - 1.0);
+                double x = (double) L * i/ (Nx - 1.0);
                 heatMap[0, i] = x * (1 - x / L);
             }
         }
