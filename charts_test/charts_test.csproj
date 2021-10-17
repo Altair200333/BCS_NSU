@@ -138,14 +138,14 @@
       <DependentUpon>UserControl1.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel.cs" />
-    <Compile Include="Windows\scot_test.xaml.cs">
-      <DependentUpon>scot_test.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Windows\Task8System.xaml.cs">
       <DependentUpon>Task8System.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\Task_10_diffusion.xaml.cs">
       <DependentUpon>Task_10_diffusion.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Task_12_spectrum.xaml.cs">
+      <DependentUpon>Task_12_spectrum.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\Task_9.xaml.cs">
       <DependentUpon>Task_9.xaml</DependentUpon>
@@ -194,15 +194,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\scot_test.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Windows\Task8System.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\Task_10_diffusion.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Task_12_spectrum.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
