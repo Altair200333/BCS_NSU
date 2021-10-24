@@ -115,7 +115,7 @@ namespace charts_test
 
             plotDifferences();
 
-            //plotFunction(createBesselFunction(1).function, 0, 2*Math.PI, 100);
+            //plotSignal(createBesselFunction(1).function, 0, 2*Math.PI, 100);
 
         }
         private void integralStepsChanged(string text)

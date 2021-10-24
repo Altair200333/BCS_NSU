@@ -42,12 +42,12 @@ namespace charts_test
             }
 
         }
-        public static void plotFunction(double[] x, double[] y, Color color, float size, WpfPlot target, bool render = true)
+        public static void plotSignal(double[] x, double[] y, Color color, float size, WpfPlot target, bool render = true)
         {
             if (x.Length < 2)
                 return;
 
-            target.Plot.AddScatter(x, y, color, markerSize: size);
+            target.Plot.AddSignalXY(x, y, color);
 
             if (render)
             {

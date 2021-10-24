@@ -20,113 +20,85 @@ namespace charts_test.Windows
     /// </summary>
     public partial class Task11_Schrodinger : Window
     {
+        private int _N = 20;
+
+        public int N
+        {
+            get => _N;
+            set
+            {
+                _N = value;
+                update();
+            }
+        }
+
+        private int _iterations = 21;
+
+        public int Iterations
+        {
+            get => _iterations;
+            set
+            {
+                _iterations = value;
+                update();
+            }
+        }
+        private int _levels = 2;
+        public int Levels
+        {
+            get => _levels;
+            set
+            {
+                _levels = value;
+                update();
+            }
+        }
         double U(double x)
         {
             return x * x / 2;
         }
 
+        private ShcrodingerSolver solver = new ShcrodingerSolver();
+
         public Task11_Schrodinger()
         {
             InitializeComponent();
 
-            int n = 300;
-            double left = -10;
-            double right = 10;
-            double d = (right - left) / (n - 1);
-            double temp;
-            double[] x, u, alpha, psi_prev, psi_prev_nondiag, psi, psi_an;
+            update();
+        }
 
-            x = new double[n];
-            u = new double[n];
-            alpha = new double[n];
-            psi_prev = new double[n];
-            psi_prev_nondiag = new double[n];
-            psi = new double[n];
-            psi_an = new double[n];
+        private void update()
+        {
+            resolve();
 
-            temp = 0;
-            for (int i = 0; i < n; i++)
+            redraw();
+        }
+
+        private List<Color> colors = new List<Color>()
+        {
+            Color.Red,
+            Color.Chocolate,
+            Color.Blue,
+            Color.BlueViolet,
+            Color.Coral
+        };
+
+        private void redraw()
+        {
+            PlotTools.clear(WpfPlot1);
+            for (int i = 0; i < solver.psi.Count; i++)
             {
-                x[i] = left + i * d;
-                u[i] = U(x[i]);
-                alpha[i] = -2 - 2 * d * d * u[i];
-                psi_prev[i] = 1; //Произвольный вектор
-                psi_an[i] = Math.Exp(-(x[i]) * (x[i]) / 2);
-
-                temp += psi_an[i] * psi_an[i];
+                PlotTools.plotSignal(solver.x.ToArray(), solver.psi[i].ToArray(), colors[i % colors.Count], 3,
+                    WpfPlot1, false);
             }
 
-            temp = Math.Sqrt(temp);
-            for (int i = 0; i < n; i++)
-            {
-                psi_an[i] /= temp; //Нормировка аналитического решения (из-за обезразмеренности)
-            }
+            //PlotTools.plotSignal(solver.x.ToArray(), solver.psi_an.ToArray(), Color.Red, 1, WpfPlot1, false);
+            PlotTools.render(WpfPlot1);
+        }
 
-            //Нормировка начального произвольного вектора
-            temp = 0;
-            for (int i = 0; i < n; i++)
-            {
-                temp += psi_prev[i] * psi_prev[i];
-            }
-
-            temp = Math.Sqrt(temp);
-
-            for (int i = 0; i < n; i++)
-            {
-                psi_prev[i] /= temp;
-            }
-
-            //Наддиагонализация
-            for (int i = 1; i < n; i++)
-            {
-                alpha[i] -= 1 / (alpha[i] - 1);
-            }
-
-            for (int k = 1; k <= 20; k++) //Итерации
-            {
-                //Наддиагонализация, последствия для правой части
-                psi_prev_nondiag[0] = psi_prev[0];
-                for (int i = 1; i < n; i++)
-                {
-                    psi_prev_nondiag[i] = psi_prev[i]; //Оригинальная правая часть будет нужна для нахождения с. з.
-                    (psi_prev[i]) -= psi_prev[i - 1] / (alpha[i - 1]);
-                }
-
-                //Решение системы
-                psi[n - 1] = psi_prev[n - 1] / alpha[n - 1];
-                for (int i = (n - 2); i >= 0; i--)
-                {
-                    psi[i] = (psi_prev[i] - psi[i + 1]) / alpha[i];
-                }
-
-                //Нахождение с. з.
-                temp = 0;
-                for (int i = 0; i < n; i++)
-                {
-                    temp += psi_prev_nondiag[i] / psi[i];
-                }
-
-                temp /= n;
-
-                //printf("%d eigenvalue = %.16lf\n", k, temp / (-2 * d * d));
-
-                //Нормировка
-                temp = 0;
-                for (int i = 0; i < n; i++)
-                {
-                    temp += psi[i] * psi[i];
-                }
-
-                temp = Math.Sqrt(temp);
-                //printf("//temp%d = %lf\n",k,temp);
-
-                for (int i = 0; i < n; i++)
-                {
-                    psi[i] /= temp;
-                    psi_prev[i] = psi[i];
-                }
-            }
-            PlotTools.plotFunction(x, psi_an, Color.Black, 3, WpfPlot1);
+        private void resolve()
+        {
+            solver.solve(-10, 10, N, Iterations, Levels, U);
         }
     }
 }
