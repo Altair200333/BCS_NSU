@@ -42,6 +42,19 @@ namespace charts_test
             }
 
         }
+        public static void plotFunction(double[] x, double[] y, Color color, float size, WpfPlot target, bool render = true)
+        {
+            if (x.Length < 2)
+                return;
+
+            target.Plot.AddScatter(x, y, color, markerSize: size);
+
+            if (render)
+            {
+                target.Render();
+            }
+
+        }
         public static void plotPoints(List<Vector> data, Color color, float size, WpfPlot target, bool render = true)
         {
             if (data.Count < 2)

@@ -138,6 +138,9 @@
       <DependentUpon>UserControl1.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel.cs" />
+    <Compile Include="Windows\Task11_Schrodinger.xaml.cs">
+      <DependentUpon>Task11_Schrodinger.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\Task8System.xaml.cs">
       <DependentUpon>Task8System.xaml</DependentUpon>
     </Compile>
@@ -191,6 +194,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControl1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Task11_Schrodinger.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
