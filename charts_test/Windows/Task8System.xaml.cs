@@ -59,7 +59,7 @@ namespace charts_test.Windows
             Vector curPos = new Vector(startX, startY);
 
             double t = 0;
-            simPoints.Add(curPos);
+            //simPoints.Add(curPos);
             while (t < endTime)
             {
                 simPoints.Add(curPos);
@@ -149,8 +149,19 @@ namespace charts_test.Windows
 
                 var res = runSimulation(solver, start.X, start.Y, dt, endTime, equation);
                 PlotTools.plotFunction(res, Color.OrangeRed, 2, WpfPlot1);
+
+                PlotTools.clear(WpfPlot2);
+                double[] time = new double[(int)(endTime / dt) + 2];
+                for (int i = 0; i < time.Length; i++)
+                {
+                    time[i] = (dt * i);
+                }
+                PlotTools.plotSignal(time, res.Select(x=>x.X).ToArray() , Color.OrangeRed, 2, WpfPlot2, false);
+                PlotTools.plotSignal(time, res.Select(x=>x.Y).ToArray() , Color.OrangeRed, 2, WpfPlot2, false);
+                PlotTools.render(WpfPlot2);
+
             }
-            
+
         }
 
         private void End_t_sliderOnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

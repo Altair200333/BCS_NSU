@@ -33,7 +33,14 @@
         <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
                       HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Black" />
         <DockPanel  Grid.Column="2" Background="GhostWhite">
-            <scot:WpfPlot Name="WpfPlot1"></scot:WpfPlot>
+            <TabControl>
+                <TabItem Header="phase">
+                    <scot:WpfPlot Name="WpfPlot1" />
+                </TabItem>
+                <TabItem Header="solution">
+                    <scot:WpfPlot Name="WpfPlot2" />
+                </TabItem>
+            </TabControl>
         </DockPanel>
 
     </Grid>
