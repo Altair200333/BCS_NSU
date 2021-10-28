@@ -17,7 +17,10 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Canvas Grid.Column="0" Background="#FFF0F1FF">
-            
+            <Slider x:Name="n_value" Minimum="40" Maximum="500"  IsSnapToTickEnabled="True" Value="10" Canvas.Left="10" Canvas.Top="10" Width="223"/>
+            <Label Content="{Binding Value, ElementName=n_value, UpdateSourceTrigger=PropertyChanged}" Margin="238,2,127,389"/>
+            <Label Content="N" Foreground="#FFC500FF" Canvas.Left="290" Canvas.Top="2"/>
+            <ComboBox x:Name="combo" Canvas.Left="10" Canvas.Top="44" Width="120"/>
         </Canvas>
         <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
                       HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Black" />

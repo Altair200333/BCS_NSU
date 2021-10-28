@@ -23,10 +23,10 @@
             <Slider x:Name="steps_slider" Canvas.Left="10" Canvas.Top="71" Width="264" Minimum="1000" Maximum="100000"/>
             <Label Content="steps: " Canvas.Left="279" Canvas.Top="63"/>
             <Label x:Name="steps_value" Content="0" Canvas.Left="322" Canvas.Top="63"/>
-            <Slider x:Name="x_slider" Canvas.Left="10" Canvas.Top="174" Width="264" Minimum="1" Maximum="50" SmallChange="1" Value="10" IsSnapToTickEnabled="True"/>
+            <Slider x:Name="x_slider" Canvas.Left="10" Canvas.Top="174" Width="264" Minimum="-50" Maximum="50" SmallChange="1" Value="10" IsSnapToTickEnabled="True"/>
             <Label Content="X: " Canvas.Left="279" Canvas.Top="166"/>
             <Label x:Name="x_value" Content="0" Canvas.Left="306" Canvas.Top="166"/>
-            <Slider x:Name="y_slider" Canvas.Left="10" Canvas.Top="205" Width="264" Minimum="1" Maximum="50" SmallChange="1" Value="30" IsSnapToTickEnabled="True"/>
+            <Slider x:Name="y_slider" Canvas.Left="10" Canvas.Top="205" Width="264" Minimum="-50" Maximum="50" SmallChange="1" Value="30" IsSnapToTickEnabled="True"/>
             <Label Content="Y: " Canvas.Left="279" Canvas.Top="197"/>
             <Label x:Name="y_value" Content="0" Canvas.Left="306" Canvas.Top="197"/>
             <Label Content="J(x, y) = " Canvas.Left="10" Canvas.Top="288"/>

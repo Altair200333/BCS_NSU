@@ -51,34 +51,94 @@ namespace charts_test.Windows
         }
 
         private SinEquation equation = new SinEquation();
-
+        private int N = 100;
+        private Func<int, int, double> window;
         public Task_12_spectrum()
         {
+            window = hannWindow;
+
             InitializeComponent();
             PlotTools.plotFunction(equation.f, equation.range.X, equation.range.Y, 200, WpfPlot1);
             PlotTools.render(WpfPlot1);
-            var ft = DFT(equation, hannWindow, 200);
-            PlotTools.plotFunction(ft, Color.Blue, 4, WpfPlot2, true);
-        }
 
-        static List<Vector> DFT(SinEquation equation, Func<int, int, double> window, int N)
-        {
-            Complex imaginary = new Complex(0, 1);
-            List<Vector> spectrum = new List<Vector>(); // pair (w, |F+[f]|)
-            for (int j = 0; j < N; ++j)
+            n_value.Value = N;
+            combo.Items.Clear();
+            combo.Items.Add("Hann");
+            combo.Items.Add("Rectangle");
+
+            combo.SelectedIndex = 0;
+            combo.SelectionChanged += (sender, args) =>
             {
-                Complex ftr = new Complex(0, 0);
-                
-                for (int k = 0; k < N; ++k)
+                if (combo.SelectedIndex == 0)
                 {
-                    var complexM = Complex.Exp((2.0 * Math.PI * j * k / N) * imaginary);
-                    ftr += equation.f(equation.t(k, N)) * complexM * window(k, N);
+                    window = hannWindow;
+                }
+                else
+                {
+                    window = rectangleWindow;
                 }
 
-                spectrum.Add(new Vector(2 * Math.PI * j / (equation.range.Y - equation.range.X), ftr.Magnitude));
+                PlotTools.clear(WpfPlot2);
+                plotTransform(window, N);
+                WpfPlot2.Plot.SetAxisLimitsX(-3, 3);
+                PlotTools.render(WpfPlot2);
+            };
+            
+            plotTransform(hannWindow, N);
+            PlotTools.render(WpfPlot2);
+
+            n_value.ValueChanged += (sender, args) =>
+            {
+                N = (int) n_value.Value;
+                PlotTools.clear(WpfPlot2);
+                plotTransform(window, N);
+                WpfPlot2.Plot.SetAxisLimitsX(-3, 3);
+                PlotTools.render(WpfPlot2);
+            };
+        }
+
+        void plotTransform(Func<int, int, double> window, int N)
+        {
+            var ft = STFT(equation, window, N);
+            PlotTools.plotSignal(ft.Item1.ToArray(), swapY(ft.Item2), Color.Blue, 3, WpfPlot2, false);
+        }
+
+        double[] swapY(List<double> values)
+        {
+            var firstArray = values.Take(values.Count / 2 + 1).ToArray();
+            var secondArray = values.Skip(values.Count / 2 + 1).ToArray();
+
+            return secondArray.Concat(firstArray).ToArray();
+        }
+        static (List<double>, List<double>) STFT(SinEquation equation, Func<int, int, double> window, int N)
+        {
+            Complex i = new Complex(0, 1);
+            List<double> spectrum = new List<double>();
+            List<double> frequencies = new List<double>();
+            double sampling = (equation.range.Y - equation.range.X) / (N - 1);
+            double samplingFreq = 1.0 / sampling;
+
+            for (int k = 0; k < N; ++k)
+            {
+                Complex sum = new Complex(0, 0);
+
+                for (int m = 0; m < N; ++m)
+                {
+                    double x = equation.range.X + (double) m / (N - 1) * (equation.range.Y - equation.range.X);
+                    double y = equation.f(x);
+
+                    double angle = 2.0 * Math.PI * m * k / (N + 1);
+                    double w = .5 * (1 - Math.Cos(2.0 * Math.PI * m / N));
+
+                    sum += y * window(m, N) * w * Complex.Exp(-angle * i);
+                }
+
+                double frequency = -samplingFreq * 0.5 + (double) k / (N - 1) * samplingFreq;
+                spectrum.Add(sum.Magnitude);
+                frequencies.Add(frequency);
             }
 
-            return spectrum;
+            return (frequencies, spectrum);
         }
     }
 }

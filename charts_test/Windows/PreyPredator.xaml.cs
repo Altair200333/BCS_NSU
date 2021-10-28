@@ -88,8 +88,7 @@ namespace charts_test.Windows
             simPoints.Add(curPos);
             for (int i = 0; i < count; i++)
             {
-                if (curPos.X < 0 || curPos.Y < 0 || curPos.X > 1000 || curPos.Y > 1000)
-                    break;
+                
 
                 simPoints.Add(curPos);
                 curPos = solver.step(curPos, sim.f, t, dt);
