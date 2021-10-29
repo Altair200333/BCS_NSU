@@ -47,9 +47,12 @@ namespace charts_test.Windows
 
         double rectangleWindow(int k, int N)
         {
-            return k >= 0 && k < N ? 1 : 0;
+            return k >= N/4 && k < N * 3 / 4 ? 1 : 0;
         }
-
+        double noWindow(int k, int N)
+        {
+            return 1.0;
+        }
         private SinEquation equation = new SinEquation();
         private int N = 100;
         private Func<int, int, double> window;
@@ -58,13 +61,14 @@ namespace charts_test.Windows
             window = hannWindow;
 
             InitializeComponent();
-            PlotTools.plotFunction(equation.f, equation.range.X, equation.range.Y, 200, WpfPlot1);
-            PlotTools.render(WpfPlot1);
+            redrawFunction();
+            redrawTransform();
 
             n_value.Value = N;
             combo.Items.Clear();
             combo.Items.Add("Hann");
             combo.Items.Add("Rectangle");
+            combo.Items.Add("No window");
 
             combo.SelectedIndex = 0;
             combo.SelectionChanged += (sender, args) =>
@@ -73,28 +77,61 @@ namespace charts_test.Windows
                 {
                     window = hannWindow;
                 }
-                else
+                else if (combo.SelectedIndex == 1)
                 {
                     window = rectangleWindow;
                 }
+                else
+                {
+                    window = noWindow;
+                }
 
-                PlotTools.clear(WpfPlot2);
-                plotTransform(window, N);
-                WpfPlot2.Plot.SetAxisLimitsX(-3, 3);
-                PlotTools.render(WpfPlot2);
+                redrawTransform();
+                redrawFunction();
             };
-            
-            plotTransform(hannWindow, N);
-            PlotTools.render(WpfPlot2);
+
 
             n_value.ValueChanged += (sender, args) =>
             {
                 N = (int) n_value.Value;
-                PlotTools.clear(WpfPlot2);
-                plotTransform(window, N);
-                WpfPlot2.Plot.SetAxisLimitsX(-3, 3);
-                PlotTools.render(WpfPlot2);
+                redrawTransform();
             };
+            a1_slider.Value = equation.a1;
+            a1_slider.ValueChanged += (sender, args) =>
+            {
+                equation.a1 = a1_slider.Value;
+
+                redrawTransform();
+
+                redrawFunction();
+            };
+        }
+
+        private void redrawTransform()
+        {
+            PlotTools.clear(WpfPlot2);
+            plotTransform(window, N);
+            WpfPlot2.Plot.SetAxisLimitsX(-6, 6);
+            PlotTools.render(WpfPlot2);
+        }
+
+        private void redrawFunction()
+        {
+            double[] xs = new double[N];
+            double[] ys = new double[N];
+
+            for (int m = 0; m < N; ++m)
+            {
+                double x = equation.range.X + (double) m / (N - 1) * (equation.range.Y - equation.range.X);
+                double y = equation.f(x) * window (m, N);
+                xs[m] = x;
+                ys[m] = y;
+            }
+
+            PlotTools.clear(WpfPlot1);
+            //PlotTools.plotFunction(equation.f, equation.range.X, equation.range.Y, 200, WpfPlot1);
+            PlotTools.plotSignal(xs, ys, Color.Green, 2, WpfPlot1, false);
+            PlotTools.render(WpfPlot1);
         }
 
         void plotTransform(Func<int, int, double> window, int N)

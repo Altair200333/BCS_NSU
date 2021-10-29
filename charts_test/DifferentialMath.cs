@@ -205,13 +205,14 @@ namespace charts_test
                 }
             }
         }
-       
+
+        public List<double> E;
 
         public void solve(double left, double right, int N, int iterations, int levels, Func<double, double> U)
         {
             reallocate(N);
 
-            List<double> E = new List<double>(N);
+            E = new List<double>(N);
             psi = new List<List<double>>(N);
             double dx = (right - left) / (N - 1);
             x = new List<double>();
@@ -251,6 +252,8 @@ namespace charts_test
             {
                 psi_an[i] = Math.Exp(-x[i] * x[i] / 2);
             }
+
+            multiply(psi_an, 1.0/norm(psi_an));
         }
 
         private void reallocate(int N)

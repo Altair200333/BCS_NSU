@@ -144,11 +144,11 @@ namespace charts_test.Windows
             else
             {
                 Solver2D solver = currentMethod == 0 ? explicitSolver : implicitSolver;
-
+                Color color = currentMethod == 0 ? Color.OrangeRed : Color.Green;
                 PlotTools.clear(WpfPlot1);
 
                 var res = runSimulation(solver, start.X, start.Y, dt, endTime, equation);
-                PlotTools.plotFunction(res, Color.OrangeRed, 2, WpfPlot1);
+                PlotTools.plotFunction(res, color, 2, WpfPlot1);
 
                 PlotTools.clear(WpfPlot2);
                 double[] time = new double[(int)(endTime / dt) + 2];

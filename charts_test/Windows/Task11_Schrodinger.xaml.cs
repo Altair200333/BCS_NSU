@@ -43,7 +43,7 @@ namespace charts_test.Windows
                 update();
             }
         }
-        private int _levels = 2;
+        private int _levels = 1;
         public int Levels
         {
             get => _levels;
@@ -86,14 +86,17 @@ namespace charts_test.Windows
         private void redraw()
         {
             PlotTools.clear(WpfPlot1);
+            var xArray = solver.x.ToArray();
             for (int i = 0; i < solver.psi.Count; i++)
             {
-                PlotTools.plotSignal(solver.x.ToArray(), solver.psi[i].ToArray(), colors[i % colors.Count], 3,
+                PlotTools.plotSignal(xArray, solver.psi[i].ToArray(), colors[i % colors.Count], 3,
                     WpfPlot1, false);
             }
 
-            //PlotTools.plotSignal(solver.x.ToArray(), solver.psi_an.ToArray(), Color.Red, 1, WpfPlot1, false);
+            PlotTools.plotSignal(xArray, solver.psi_an.ToArray(), Color.Black, 1, WpfPlot1, false);
             PlotTools.render(WpfPlot1);
+
+            energy_label.Content = solver.E[0];
         }
 
         private void resolve()

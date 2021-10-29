@@ -19,10 +19,12 @@
         <Canvas Grid.Column="0" Background="#FFF0F1FF">
             <Slider x:Name="n_slider" Canvas.Left="10" Canvas.Top="10"  Minimum="20" Maximum="1000" SmallChange="1" Value="{Binding Path=N, Mode=TwoWay}" IsSnapToTickEnabled="True" Width="277"/>
             <Label Content="{Binding Value, ElementName=n_slider, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="287" Canvas.Top="2"/>
-            <Slider x:Name="iterations_slider" Canvas.Left="10" Canvas.Top="53"  Minimum="20" Maximum="200" SmallChange="1" Value="{Binding Iterations, Mode=TwoWay}" IsSnapToTickEnabled="True" Width="277"/>
+            <Slider x:Name="iterations_slider" Canvas.Left="10" Canvas.Top="53"  Minimum="1" Maximum="200" SmallChange="1" Value="{Binding Iterations, Mode=TwoWay}" IsSnapToTickEnabled="True" Width="277"/>
             <Label Content="{Binding Value, ElementName=iterations_slider, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="287" Canvas.Top="45"/>
             <Slider x:Name="levels_slider" Canvas.Left="10" Canvas.Top="84"  Minimum="1" Maximum="10" SmallChange="1" Value="{Binding Levels, Mode=TwoWay}" IsSnapToTickEnabled="True" Width="277"/>
             <Label Content="{Binding Value, ElementName=levels_slider, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="287" Canvas.Top="76"/>
+            <Label Content="E" Canvas.Left="10" Canvas.Top="147"/>
+            <Label x:Name="energy_label" Content="0" Canvas.Left="31" Canvas.Top="147"/>
         </Canvas>
         <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
                       HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Black" />
