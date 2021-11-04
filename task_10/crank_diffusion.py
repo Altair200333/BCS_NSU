@@ -49,10 +49,10 @@ def solve_crank_nicolson(U, D, L, T, N_x, N_t):
 
     A[0, 0] = A[-1, -1] = 1
     A[0, 1] = A[-1, -2] = 0
-    
+    print(A)
     #gaussian ellimination and it's steps
     eliminated, ratios = elliminate_crank(A)
-
+    print(eliminated)
     res = fill_map(U, a, N_x, N_t, eliminated, ratios)
 
     return res

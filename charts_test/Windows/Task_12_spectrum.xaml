@@ -17,12 +17,14 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Canvas Grid.Column="0" Background="#FFF0F1FF">
-            <Slider x:Name="n_value" Minimum="40" Maximum="500"  IsSnapToTickEnabled="True" Value="10" Canvas.Left="10" Canvas.Top="10" Width="223"/>
+            <Slider x:Name="n_value" Minimum="10" Maximum="500"  IsSnapToTickEnabled="True" Value="10" Canvas.Left="10" Canvas.Top="10" Width="223"/>
             <Label Content="{Binding Value, ElementName=n_value, UpdateSourceTrigger=PropertyChanged}" Margin="238,2,127,389"/>
             <Label Content="N" Foreground="#FFC500FF" Canvas.Left="290" Canvas.Top="2"/>
             <ComboBox x:Name="combo" Canvas.Left="10" Canvas.Top="44" Width="120"/>
             <Slider x:Name="a1_slider" Minimum="0.001" Maximum="0.5" Value="0.1" Canvas.Left="10" Canvas.Top="137" Width="223"/>
             <Label Content="{Binding Value, ElementName=a1_slider, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="238" Canvas.Top="129"/>
+            <Slider x:Name="offste_slider" Minimum="0.05" Maximum="1" Value="0.01" Canvas.Left="10" Canvas.Top="180" Width="223"/>
+            <Label Content="{Binding Value, ElementName=offste_slider, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="238" Canvas.Top="172"/>
         </Canvas>
         <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
                       HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Black" />

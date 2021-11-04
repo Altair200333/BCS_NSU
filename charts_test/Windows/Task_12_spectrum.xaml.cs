@@ -55,7 +55,10 @@ namespace charts_test.Windows
         }
         private SinEquation equation = new SinEquation();
         private int N = 100;
+        
         private Func<int, int, double> window;
+
+        public double offset = 0.1;
         public Task_12_spectrum()
         {
             window = hannWindow;
@@ -105,12 +108,21 @@ namespace charts_test.Windows
 
                 redrawFunction();
             };
+
+            offste_slider.Value = offset;
+            offste_slider.ValueChanged += (sender, args) =>
+            {
+                offset = offste_slider.Value;
+                redrawTransform();
+
+            };
         }
 
         private void redrawTransform()
         {
             PlotTools.clear(WpfPlot2);
             plotTransform(window, N);
+            //plotTransform(rectangleWindow, N);
             WpfPlot2.Plot.SetAxisLimitsX(-6, 6);
             PlotTools.render(WpfPlot2);
         }
@@ -147,7 +159,7 @@ namespace charts_test.Windows
 
             return secondArray.Concat(firstArray).ToArray();
         }
-        static (List<double>, List<double>) STFT(SinEquation equation, Func<int, int, double> window, int N)
+        (List<double>, List<double>) STFT(SinEquation equation, Func<int, int, double> window, int N)
         {
             Complex i = new Complex(0, 1);
             List<double> spectrum = new List<double>();
@@ -155,14 +167,14 @@ namespace charts_test.Windows
             double sampling = (equation.range.Y - equation.range.X) / (N - 1);
             double samplingFreq = 1.0 / sampling;
 
-            for (int k = 0; k < N; ++k)
+            for (double k = 0; k < N; k += offset)
             {
                 Complex sum = new Complex(0, 0);
 
                 for (int m = 0; m < N; ++m)
                 {
                     double x = equation.range.X + (double) m / (N - 1) * (equation.range.Y - equation.range.X);
-                    double y = equation.f(x);
+                    Complex y = equation.f(x);
 
                     double angle = 2.0 * Math.PI * m * k / (N + 1);
                     double w = .5 * (1 - Math.Cos(2.0 * Math.PI * m / N));
@@ -171,6 +183,7 @@ namespace charts_test.Windows
                 }
 
                 double frequency = -samplingFreq * 0.5 + (double) k / (N - 1) * samplingFreq;
+                //spectrum.Add(Math.Log(sum.Magnitude));
                 spectrum.Add(sum.Magnitude);
                 frequencies.Add(frequency);
             }

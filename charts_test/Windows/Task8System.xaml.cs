@@ -139,6 +139,17 @@ namespace charts_test.Windows
                 PlotTools.plotPoints(explicitRes, Color.OrangeRed, 2, WpfPlot1, false);
                 PlotTools.plotPoints(implicitRes, Color.Green, 3, WpfPlot1, false);
                 PlotTools.render(WpfPlot1);
+                PlotTools.clear(WpfPlot2);
+                double[] time = new double[(int)(endTime / dt) + 2];
+                for (int i = 0; i < time.Length; i++)
+                {
+                    time[i] = (dt * i);
+                }
+                PlotTools.plotSignal(time, explicitRes.Select(x => x.X).ToArray(), Color.OrangeRed, 2, WpfPlot2, false);
+                PlotTools.plotSignal(time, explicitRes.Select(x => x.Y).ToArray(), Color.OrangeRed, 2, WpfPlot2, false);
+                PlotTools.plotSignal(time, implicitRes.Select(x => x.X).ToArray(), Color.Green, 2, WpfPlot2, false);
+                PlotTools.plotSignal(time, implicitRes.Select(x => x.Y).ToArray(), Color.Green, 2, WpfPlot2, false);
+                PlotTools.render(WpfPlot2);
 
             }
             else

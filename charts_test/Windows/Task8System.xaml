@@ -23,9 +23,9 @@
             <Label Content="{Binding Value, ElementName=end_t_slider, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="287" Canvas.Top="88"/>
             <Label Content="dt" Canvas.Left="10" Canvas.Top="7"/>
             <Label Content="end time" Canvas.Left="10" Canvas.Top="65"/>
-            <Slider x:Name="x_slider" Canvas.Left="10" Canvas.Top="212" Width="272" Maximum="0.02" Minimum="-0.02"/>
+            <Slider x:Name="x_slider" Canvas.Left="10" Canvas.Top="212" Width="272" Maximum="1" Minimum="-1"/>
             <Label Content="{Binding Value, ElementName=x_slider, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="287" Canvas.Top="204"/>
-            <Slider x:Name="y_slider" Canvas.Left="10" Canvas.Top="272" Width="272" Maximum="0.02" Minimum="-0.02"/>
+            <Slider x:Name="y_slider" Canvas.Left="10" Canvas.Top="272" Width="272" Maximum="1" Minimum="-1"/>
             <Label Content="{Binding Value, ElementName=y_slider, UpdateSourceTrigger=PropertyChanged}" Canvas.Left="287" Canvas.Top="264"/>
             <ComboBox x:Name="methods" Canvas.Left="10" Canvas.Top="328" Width="120"/>
 
