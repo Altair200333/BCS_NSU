@@ -226,26 +226,26 @@ namespace charts_test
             List<double> psi_0 = new List<double>();
             for (int i = 0; i < N; i++)
             {
-                psi_0.Add(1.0 + ((double) i / (N - 1)));
+                psi_0.Add(1.0 + ((double)i / (N - 1)));
             }
 
             for (int i = 0; i < levels; i++)
             {
-                var psi_next = new List<double>(psi_0);
-                Orthogonalization(psi_next, psi);
-                List<double> psi_prev = null;
+                var psiNext = new List<double>(psi_0);
+                Orthogonalization(psiNext, psi);
+                List<double> psiPrev = null;
 
                 for (int k = 0; k < iterations; k++)
                 {
-                    psi_prev = psi_next;
-                    psi_next = TridiagMatrixAlg(copy(a), copy(b), copy(c), copy(psi_next), N);
-                    Orthogonalization(psi_next, psi);
+                    psiPrev = psiNext;
+                    psiNext = TridiagMatrixAlg(copy(a), copy(b), copy(c), copy(psiNext), N);
+                    Orthogonalization(psiNext, psi);
                 }
 
-                var E0 = norm(psi_prev) / norm(psi_next);
+                var E0 = norm(psiPrev) / norm(psiNext);
                 E.Add(E0);
-                multiply(psi_next, 1.0/norm(psi_next));
-                psi.Add(psi_next);
+                multiply(psiNext, 1.0/norm(psiNext));
+                psi.Add(psiNext);
             }
 
             for (int i = 0; i < N; i++)

@@ -183,8 +183,8 @@ namespace charts_test.Windows
                 }
 
                 double frequency = -samplingFreq * 0.5 + (double) k / (N - 1) * samplingFreq;
-                //spectrum.Add(Math.Log(sum.Magnitude));
-                spectrum.Add(sum.Magnitude);
+                spectrum.Add(Math.Log(sum.Magnitude));
+                //spectrum.Add(sum.Magnitude);
                 frequencies.Add(frequency);
             }
 
